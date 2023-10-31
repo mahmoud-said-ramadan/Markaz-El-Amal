@@ -1,28 +1,26 @@
-import { nanoid } from "nanoid";
 import sendEmail, { html } from "./email.js";
 import ErrorClass from "./errorClass.js";
-import userModel from "../../DB/Models/User.model.js";
-
-
-const sendCode = async (user, status) => {
+import { allMessages } from "./localizationHelper.js";
+import { code, role } from "./shared.js";
+const sendCode = async (user, status , model) => {
   // If Last Code Send In Time Less Than 5 Mints
   if (Date.now() < user.codeInfo?.createdAt + 5 * 60 * 1000) {
     return {
       error: new ErrorClass(
-        "You Can NOT Ask For a new Code, Until 5 Mints from The Last Sended One!",
+        allMessages[req.query.ln].NOT_EXPIRED,
         409
       ),
     };
   }
 
   //Generate OTP Code
-  const codeInfo = {
-    code: nanoid(6),
+  const OTP = {
+    code: code(5),
     createdAt: Date.now(),
     status,
   };
-
-  const htmlCode = html(`This Code For Make ${status}`, codeInfo.code);
+console.log(OTP);
+  const htmlCode = html(`This Code For Make ${status}`, OTP);
   //Send New Confirmation Mail
   if (
     !(await sendEmail({
@@ -32,10 +30,10 @@ const sendCode = async (user, status) => {
     }))
   ) {
     return {
-      error: new ErrorClass("This Email Rejected!", 400),
+      error: new ErrorClass(allMessages[req.query.ln].FAIL_SEND_EMAIL, 400),
     };
   }
-  await userModel.updateOne({ _id: user._id }, { codeInfo });
+  await model.updateOne({ _id: user._id }, { OTP });
   return true;
 };
 
@@ -52,18 +50,19 @@ export const getStatusFromUrl = (url) => {
 };
 
 export const generateConfirmCode = async (req) => {
+  const model = role(req.originalUrl)
   const status = getStatusFromUrl(req.originalUrl);
   console.log({status});
   let userExist;
   status === "confirmChange"
     ? (userExist = req.user)
-    : (userExist = await userModel.findOne({ email: req.body.email }));
+    : (userExist = await model.findOne({ email: req.body.email }));
   if (!userExist) {
     return {
-      error: new ErrorClass("NOT REGISTERED!... Please signUp!", 404),
+      error: new ErrorClass(allMessages[req.query.ln].USER_NOT_EXIST, 404),
     };
   }
-  const codeSentStatus = await sendCode(userExist, status);
+  const codeSentStatus = await sendCode(userExist, status , model);
   if (codeSentStatus.error) {
     return codeSentStatus;
   }
