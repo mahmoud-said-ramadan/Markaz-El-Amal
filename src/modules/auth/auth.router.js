@@ -24,9 +24,9 @@ router.post(
 router.post('/:role/login',asyncErrorHandler(login))
 router.post('/:role/confirm',validation(validators.confirm),confirm)
 router.post('/:role/changeEmail/confirm',validation(validators.confirm),confirm)
-router.post('/:role/resetPassword',validation(validators.reset),confirm)
+router.post('/:role/password/reset',validation(validators.reset),confirm)
 router.post('/:role/newConfirm',validation(validators.generate),generateConfirmation)
-router.post('/:role/forgetPassword',validation(validators.generate),generateConfirmation)
+router.post('/:role/password/forget',validation(validators.generate),generateConfirmation)
 router.post('/:role/unsubscribe',validation(validators.generate),generateConfirmation)
 
 export default router;
