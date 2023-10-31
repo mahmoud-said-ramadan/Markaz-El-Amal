@@ -2,14 +2,16 @@ import jwt from "jsonwebtoken";
 import { StatusCodes } from "http-status-codes";
 import { asyncErrorHandler } from "../utils/errorHandling.js";
 import ErrorClass from "../utils/errorClass.js";
-import userModel from "../../DB/models/User.model.js";
+import patientModel from "../../DB/models/Patient.model.js";
 import { allMessages } from "../utils/localizationHelper.js";
+import doctorModel from "../../DB/models/doctor.model.js";
 
-export const roles = {
-  admin: "Admin",
-  user: "User",
+export const Roles = {
+  admin: "Admin", 
+  doctor: "Doctor", 
+  user: "Patient",
 };
-Object.freeze(roles);
+Object.freeze(Roles);
 export const auth = (roles = []) => {
   return asyncErrorHandler(async (req, res, next) => {
     const { authorization } = req.headers;
@@ -49,7 +51,14 @@ export const auth = (roles = []) => {
         )
       );
     }
-    const user = await userModel.findById(decoded.id);
+
+    let user;
+    if (decoded.role == Roles.doctor) {
+      user = await doctorModel.findById(decoded.id);
+    }
+    if (decoded.role == Roles.user) {
+      user = await patientModel.findById(decoded.id);
+    }
     if (!user) {
       return next(
         new ErrorClass(
@@ -58,19 +67,19 @@ export const auth = (roles = []) => {
         )
       );
     }
-    if (!user.confirmed) {
-      return next(
-        new ErrorClass(
-          allMessages[req.query.ln].USER_NOT_EXIST,
-          StatusCodes.NOT_ACCEPTABLE
-        )
-      );
-    }
     if (!roles.includes(user.role)) {
       return next(
         new ErrorClass(
           allMessages[req.query.ln].UNAUTHORIZED,
           StatusCodes.FORBIDDEN
+        )
+      );
+    }
+    if (!user.loggedIn) {
+      return next(
+        new ErrorClass(
+          allMessages[req.query.ln].LOGIN_FIRST,
+          StatusCodes.UNAUTHORIZED
         )
       );
     }
