@@ -19,8 +19,7 @@ const sendCode = async (user, status , model) => {
     createdAt: Date.now(),
     status,
   };
-console.log(OTP);
-  const htmlCode = html(`This Code For Make ${status}`, OTP);
+  const htmlCode = html(`This Code For Make ${status}`, OTP.code);
   //Send New Confirmation Mail
   if (
     !(await sendEmail({
