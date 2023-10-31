@@ -7,18 +7,19 @@ import { allMessages } from "../../../utils/localizationHelper.js";
 
 export const confirm = asyncErrorHandler(async (req, res, next) => {
   const { code, email } = req.body;
-  const model = role(req.originalUrl)
+  const model = role(req.originalUrl);
   const userExist = await model.findOne({ email: email });
   if (!userExist) {
-    return next(new ErrorClass(allMessages[req.query.ln].NOT_VALID_ACCOUNT, 404));
+    return next(
+      new ErrorClass(allMessages[req.query.ln].NOT_VALID_ACCOUNT, 404)
+    );
   }
   let status = getStatusFromUrl(req.originalUrl);
-  console.log({status});
   // This Code Expires in 5 Mints
   if (
-    code !== userExist.codeInfo?.code ||
-    userExist.codeInfo?.status !== status ||
-    Date.now() > userExist.codeInfo?.createdAt + 5 * 60 * 1000
+    code !== userExist.OTP?.code ||
+    userExist.OTP?.status !== status ||
+    Date.now() > userExist.OTP?.createdAt + 5 * 60 * 1000
   ) {
     return next(new ErrorClass(allMessages[req.query.ln].INVALID_CODE, 400));
   }
@@ -45,7 +46,7 @@ export const confirm = asyncErrorHandler(async (req, res, next) => {
     case "password":
       let { newPassword } = req.body;
       // Hash the password Before updating
-      newPassword = hash({plaintext:newPassword});
+      newPassword = hash({ plaintext: newPassword });
       await model.findByIdAndUpdate(userExist._id, {
         password: newPassword,
       });
