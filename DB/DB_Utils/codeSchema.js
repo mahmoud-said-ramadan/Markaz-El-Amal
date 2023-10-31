@@ -4,8 +4,8 @@ export const codeSchema = new Schema(
   {
     code: {
       type: String,
-      min: [6, "Code length must be 5 character"],
-      max: [6, "Code length must be 5 character"],
+      min: [5, "Code length must be 5 character"],
+      max: [5, "Code length must be 5 character"],
     },
     status: {
       type: String,
