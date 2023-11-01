@@ -7,7 +7,7 @@ Needed Data => New email, code, hashedCode (body)
 Return Data => Message 
 */
 const confirmChangeEmail = (model) => {
-  async (req, res, next) => {
+  return async (req, res, next) => {
     const { newEmail, code, hashedCode } = req.body; // Get all needed data from body
 
     // Check if the code match the code that send on email or not
@@ -19,7 +19,16 @@ const confirmChangeEmail = (model) => {
         )
       );
     }
-    await model.updateOne({ _id: req.user._id }, { email: newEmail });
+    if (Date.now()  > req.user.OTP.createdAt.getTime() + (5 * 60 * 1000) ) {
+      return next(
+        new ErrorClass(
+          allMessages[req.query.ln].CODE_EXPIRED,
+          StatusCodes.BAD_REQUEST
+        )
+      );
+    }
+    console.log({newEmail,_id:req.user._id,emailuser:req.user.email});
+    // await model.updateOne({ _id: req.user._id }, { email: newEmail });
 
     return res
       .status(StatusCodes.ACCEPTED)
