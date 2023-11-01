@@ -14,7 +14,7 @@ export const login = async (req, res, next) => {
     }
     // Check confirm email
     if (!user.confirmed) {
-      return next(new ErrorClass("You have to confirm your Email", StatusCodes.BAD_REQUEST));
+      return next(new ErrorClass(allMessages[req.query.ln].EMAIL_EXIST_NOT_CONFIRMED, StatusCodes.BAD_REQUEST));
     }
     // Check password
     const match = compare({ plaintext: password, hashValue: user.password });
