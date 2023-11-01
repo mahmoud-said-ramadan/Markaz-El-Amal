@@ -3,7 +3,7 @@ import patientModel from "../../../../DB/models/Patient.model.js";
 import changeEmail from "../../../utils/handlers/changeEmail.js";
 import doctorModel from "../../../../DB/models/Doctor.model.js";
 
-const changeEmailController = asyncErrorHandler((req, res, next) => {
+const changeEmailController = asyncErrorHandler(async (req, res, next) => {
   if (req.originalUrl.includes("patient"))
     changeEmail(patientModel)(req, res, next);
   else changeEmail(doctorModel)(req, res, next);

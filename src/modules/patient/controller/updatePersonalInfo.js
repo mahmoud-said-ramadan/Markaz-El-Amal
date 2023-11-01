@@ -3,7 +3,7 @@ import doctorModel from "../../../../DB/models/Doctor.model.js";
 import { asyncErrorHandler } from "../../../utils/errorHandling.js";
 import updatePersonalInfo from "../../../utils/handlers/updatePersonalInfo.js";
 
-const updatePersonalInfoController = asyncErrorHandler((req, res, next) => {
+const updatePersonalInfoController = asyncErrorHandler(async(req, res, next) => {
   if (req.originalUrl.includes("patient"))
     updatePersonalInfo(patientModel)(req, res, next);
   else updatePersonalInfo(doctorModel)(req, res, next);
