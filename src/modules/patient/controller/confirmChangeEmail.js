@@ -1,6 +1,6 @@
 import { asyncErrorHandler } from "../../../utils/errorHandling.js";
 import patientModel from "../../../../DB/models/Patient.model.js";
-import doctorModel from "../../../../DB/models/doctor.model.js";
+import doctorModel from "../../../../DB/models/Doctor.model.js";
 import confirmChangeEmail from "../../../utils/handlers/confirmChangeEmail.js";
 
 const confirmChangeEmailController = asyncErrorHandler((req, res, next) => {

@@ -4,7 +4,7 @@ import { asyncErrorHandler } from "../utils/errorHandling.js";
 import ErrorClass from "../utils/errorClass.js";
 import patientModel from "../../DB/models/Patient.model.js";
 import { allMessages } from "../utils/localizationHelper.js";
-import doctorModel from "../../DB/models/doctor.model.js";
+import doctorModel from "../../DB/models/Doctor.model.js";
 
 export const Roles = {
   admin: "Admin", 
