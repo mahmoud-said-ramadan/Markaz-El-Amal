@@ -67,7 +67,7 @@ export const auth = (roles = []) => {
         )
       );
     }
-    if (!roles.includes(user.role)) {
+    if (!roles.includes(decoded.role)) {
       return next(
         new ErrorClass(
           allMessages[req.query.ln].UNAUTHORIZED,
