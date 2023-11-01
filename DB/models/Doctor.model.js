@@ -16,11 +16,6 @@ const doctorSchema = new mongoose.Schema(
       required: true,
       lowercase: true,
     },
-    tempEmail: {
-      type: String,
-      unique: false,
-      lowercase: true,
-    },
     password: { type: String, required: true },
     phone: { type: String },
     loggedIn: { type: Boolean, default: false },
