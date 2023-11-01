@@ -27,7 +27,7 @@ const confirmChangeEmail = (model) => {
         )
       );
     }
-    console.log({newEmail,_id:req.user._id,emailuser:req.user.email});
+    // console.log({newEmail,_id:req.user._id,emailuser:req.user.email});
     // await model.updateOne({ _id: req.user._id }, { email: newEmail });
 
     return res
