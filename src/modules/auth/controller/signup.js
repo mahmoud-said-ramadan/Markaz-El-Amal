@@ -1,20 +1,22 @@
-import { hash ,compare } from "../../../utils/HashAndCompare.js";
+import { hash, compare } from "../../../utils/HashAndCompare.js";
 import ErrorClass from "../../../utils/errorClass.js";
 import { StatusCodes } from "http-status-codes";
 import crypto from "crypto-js";
-import { generateConfirmCode } from "../../../utils/code.js";
 import cloudinary from "../../../utils/cloudinary.js";
-import { nanoid } from 'nanoid'
+import { nanoid } from "nanoid";
 import { code, role } from "../../../utils/shared.js";
 import { allMessages } from "../../../utils/localizationHelper.js";
 import sendEmail, { html } from "../../../utils/email.js";
-
-export const preSignup = async (req, res, next) => {
+import { asyncErrorHandler } from "../../../utils/errorHandling.js";
+//-----------pre signup
+export const preSignup = asyncErrorHandler(async (req, res, next) => {
   const { email } = req.body;
   const model = role(req.originalUrl);
-  // Find user
+  /**
+   * check if email found before ? ❎ : ✔️
+   * input: email
+   */
   const check = await model.findOne({ email });
-  // check if user found before
   if (check) {
     return next(
       new ErrorClass(
@@ -23,9 +25,11 @@ export const preSignup = async (req, res, next) => {
       )
     );
   }
-  // generate OTP
-  const OTP = code(5)
-  // Send a confirmation email to a user to confirm their email address
+  /**
+   * generate OTP
+   * Send a confirmation email to a user to confirm their email address
+   */
+  const OTP = code(5);
   if (
     !(await sendEmail({
       to: req.body.email,
@@ -34,25 +38,45 @@ export const preSignup = async (req, res, next) => {
     }))
   ) {
     return {
-      error: new ErrorClass(allMessages[req.query.ln].FAIL_SEND_EMAIL, 400),
+      error: new ErrorClass(
+        allMessages[req.query.ln].FAIL_SEND_EMAIL,
+        StatusCodes.BAD_REQUEST
+      ),
     };
   }
-  const hashOTP =  hash({ plaintext: OTP })
+  // Hashing OTP
+  const hashOTP = hash({ plaintext: OTP });
   return res
-    .status(201)
-    .json({ message: allMessages[req.query.ln].CHECK_YOUY_INBOX, OTP: hashOTP });
-};
-
-export const signup = async (req, res, next) => {
-  const { email, password, hashOTP , OTP } = req.body;
-  const match = compare({ plaintext: OTP , hashValue: hashOTP});
+    .status(StatusCodes.OK)
+    .json({
+      message: allMessages[req.query.ln].CHECK_YOUY_INBOX,
+      OTP: hashOTP,
+    });
+});
+//------------Signup
+export const signup = asyncErrorHandler(async (req, res, next) => {
+  const { email , password, hashOTP, OTP } = req.body;
+  /**
+   * compare OTP and hashOTP
+   */
+  const match = compare({ plaintext: OTP, hashValue: hashOTP });
   if (!match) {
-    return next(new ErrorClass(allMessages[req.query.ln].INVALID_CODE, StatusCodes.BAD_REQUEST));
+    return next(
+      new ErrorClass(
+        allMessages[req.query.ln].INVALID_CODE,
+        StatusCodes.BAD_REQUEST
+      )
+    );
   }
+  /**
+   * Get model ( doctor || patient || admin )
+   */
   const model = role(req.originalUrl);
-  // Find user
+  /**
+   * check if email found before ? ❎ : ✔️
+   * input: email
+   */
   const check = await model.findOne({ email });
-  // check if user found before
   if (check) {
     return next(
       new ErrorClass(
@@ -61,28 +85,37 @@ export const signup = async (req, res, next) => {
       )
     );
   }
-  // Send code to confirm user email
+  /**
+   * authorized: Admin - doctor - patient
+   * input: phone?
+   * output: Encrypt phone
+   */
   if (req.body.phone) {
-    // Encrypt phone
     req.body.phone = crypto.AES.encrypt(
       req.body.phone,
       process.env.encryption_key
     ).toString();
   }
-  // Hash password
+  // Hashing password
   const hashpassword = hash({ plaintext: password });
-  // Create User
+  /**
+   * create account: doctor || patient || admin
+   */
   const newUser = new model({
-    name: req.body.name,
     email,
+    name: req.body.name,
     password: hashpassword,
     phone: req.body.phone,
     customId: nanoid(),
     DateOfBirth: req.body.DateOfBirth,
     gender: req.body.gender,
+    confirmed: true
   });
+  /**
+   * input: image?
+   * Upload image to cloudinary
+   */
   if (req.files.image) {
-    //Upload image in cloudinary
     const { secure_url, public_id } = await cloudinary.uploader.upload(
       req.files.image[0].path,
       {
@@ -99,14 +132,7 @@ export const signup = async (req, res, next) => {
     newUser.image = { secure_url, public_id };
   }
   await newUser.save();
-  //send code to confirm email
-  const codeStatus = await generateConfirmCode(req);
-  if (codeStatus.error) {
-    return next(
-      new ErrorClass(codeStatus.error.message, codeStatus.error.statusCode)
-    );
-  }
   return res
-    .status(201)
+    .status(StatusCodes.ACCEPTED)
     .json({ message: allMessages[req.query.ln].CHECK_YOUY_INBOX, newUser });
-};
+});
