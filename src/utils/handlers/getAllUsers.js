@@ -7,7 +7,7 @@ Return Data => Message , Users
 */
 
 const getAllUsers = (model) => {
-  async (req, res, next) => {
+ return  async (req, res, next) => {
     const users = await model.find(); // Search for  all users in DB
 
     // Validate that there is users exist in DB

@@ -8,7 +8,7 @@ Needed Data => (Old and New) password (body)
 Return Data => Message
 */
 const changePassword = (model) => {
-  async (req, res, next) => {
+  return async (req, res, next) => {
     const { oldPassword, newPassword } = req.body; // Get all needed data from body
 
     // Making sure that the oldPassword is correct

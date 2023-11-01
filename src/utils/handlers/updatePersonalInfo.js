@@ -10,7 +10,7 @@ Needed Data { patient => (name, phone, image)(optional)(body)
 Return Data => Message , updated User 
 */
 const updatePersonalInfo = (model) => {
-  async (req, res, next) => {
+  return async (req, res, next) => {
     // Find a user in the database
     const isUser = await model.findById(req.user._id);
     if (!isUser) {
@@ -26,6 +26,7 @@ const updatePersonalInfo = (model) => {
       const { secure_url, public_id } = await cloudinary.uploader.upload(
         req.file?.path,
         {
+          // Overwrite the previous image if exist
           public_id: isUser.image?.public_id,
           // Check if user already has image or not
           folder: isUser.image
@@ -43,12 +44,9 @@ const updatePersonalInfo = (model) => {
         process.env.encryption_key
       ).toString();
     }
-    //update user name if is send
-    if (req.body.name) {
-      req.body.name = isUser.name;
-    }
+
     // Update the user profile
-    const updatedUser = await model.updateOne({ _id: req.user._id }, req.body, {
+    const updatedUser = await model.findByIdAndUpdate(req.user._id, req.body, {
       new: true,
     });
     return res.status(StatusCodes.ACCEPTED).json({

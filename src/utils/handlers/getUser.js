@@ -1,13 +1,14 @@
 import { StatusCodes } from "http-status-codes";
 import ErrorClass from "../errorClass.js";
 import { allMessages } from "../localizationHelper.js";
+import { asyncErrorHandler } from "../errorHandling.js";
 /*
 Needed Data => UserId (params)
 Return Data => Message , User
 */
 
 const getUser = (model) => {
-  async (req, res, next) => {
+  return async (req, res, next) => {
     const { id } = req.params; // Get userId from params
 
     const user = await model.findById(id); // Search for user in DB
