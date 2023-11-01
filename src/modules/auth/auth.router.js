@@ -46,7 +46,7 @@ router.post(
 /**
  * Reset password ✔️
  * authorized: Admin - doctor - patient
- * input: OTP, email
+ * input: OTP, email , newPassword
  * output: 
  */
 router.post("/:role/password/reset", validation(validators.reset), confirm);
