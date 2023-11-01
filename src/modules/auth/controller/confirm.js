@@ -4,22 +4,45 @@ import ErrorClass from "../../../utils/errorClass.js";
 import { asyncErrorHandler } from "../../../utils/errorHandling.js";
 import { role } from "../../../utils/shared.js";
 import { allMessages } from "../../../utils/localizationHelper.js";
+import { StatusCodes } from "http-status-codes";
 
 export const confirm = asyncErrorHandler(async (req, res, next) => {
-  const { code, email } = req.body;
+  const { OTP, email } = req.body;
   const model = role(req.originalUrl);
+  /**
+   * check if this account valid ? ✔️ : ❎
+   */
   const userExist = await model.findOne({ email: email });
   if (!userExist) {
     return next(
-      new ErrorClass(allMessages[req.query.ln].NOT_VALID_ACCOUNT, 404)
+      new ErrorClass(
+        allMessages[req.query.ln].NOT_VALID_ACCOUNT,
+        StatusCodes.UNAUTHORIZED
+      )
     );
   }
   let status = getStatusFromUrl(req.originalUrl);
-  // This Code Expires in 5 Mints
+  if (status == "confirm") {
+    /**
+     * check if email is confirmed before ? ❎ : ✔️
+     */
+    if (userExist.confirmed) {
+      return next(
+        new ErrorClass(
+          allMessages[req.query.ln].EMAIL_ALREADY_CONFIRMED,
+          StatusCodes.BAD_REQUEST
+        )
+      );
+    }
+  }
+  /**
+   * create expired date to check code if expired ( code will be expired after 5 min )
+   */
+  const expired = new Date(userExist.OTP.createdAt);
   if (
-    code !== userExist.OTP?.code ||
+    OTP !== userExist.OTP?.code ||
     userExist.OTP?.status !== status ||
-    Date.now() > userExist.OTP?.createdAt + 5 * 60 * 1000
+    new Date() > new Date(expired.setMinutes(expired.getMinutes() + 5))
   ) {
     return next(new ErrorClass(allMessages[req.query.ln].INVALID_CODE, 400));
   }
@@ -39,7 +62,7 @@ export const confirm = asyncErrorHandler(async (req, res, next) => {
       }
       await model.updateOne(
         { tempEmail: email },
-        { confirmed: true, email, tempEmail: "" }
+        { confirmed: true, email }
       );
       message = allMessages[req.query.ln].SUCCESS_CONFIRM_EMAIL;
       break;
