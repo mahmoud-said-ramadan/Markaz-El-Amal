@@ -82,7 +82,8 @@ export const allMessages =
         UNAUTHORIZED:"You are not authorized to access this endpoint",
         NO_USER_FOUND:"There is no user found",
         CODE_DURATION_NOT_ENDED:"You Can NOT Ask For a new Code, Until 5 Mints from The Last Sended One!",
-        EMAIL_NOT_FOUND:"NOT REGISTERED!... Please signUp!"
+        EMAIL_NOT_FOUND:"NOT REGISTERED!... Please signUp!",
+        EMAIL_SAME_AS_OLD:"This is your old email, You must choose different email"
     },
     ar: {
         LOGOUT_SUCCESS:"تم تسجيل الخروج بنجاح",
@@ -167,7 +168,9 @@ export const allMessages =
         CHECK_YOUY_INBOX: "تفحص حسابك الشخصى",
         NO_USER_FOUND:"لم يتم العثور على مستخدم",
         CODE_DURATION_NOT_ENDED:"!لا يمكنك طلب رمز جديد ، حتى 5 دقائق من آخر رمز مرسل",
-        EMAIL_NOT_FOUND:"غير مسجل... الرجاء التسجيل"
+        EMAIL_NOT_FOUND:"غير مسجل... الرجاء التسجيل",
+        EMAIL_SAME_AS_OLD:"هذا هو بريدك الإلكتروني القديم ، يجب عليك اختيار بريد إلكتروني مختلف"
+
 
     }
 
