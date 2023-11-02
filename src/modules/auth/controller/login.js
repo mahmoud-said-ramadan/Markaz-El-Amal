@@ -35,7 +35,7 @@ export const login = asyncErrorHandler(async (req, res, next) => {
     /**
      * Generate access token valid ( 2 m ) 
      */
-    const accessToken = generateToken({payload: {id: user._id , email:user.email} } , {expiresIn : 60 * 60 * 24 * 30 * 2 } )
+    const accessToken = generateToken({payload: {id: user._id , email:user.email , role: model.modelName } } , {expiresIn : 60 * 60 * 24 * 30 * 2 } )
     // const refreshToken = generateToken({payload: {id: user._id , email:user.email} })
     user.loggedIn = true
     await user.save() 
