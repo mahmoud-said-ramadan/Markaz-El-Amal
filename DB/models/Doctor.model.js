@@ -27,10 +27,9 @@ const doctorSchema = new Schema(
           type: Number,
           required: true,
         },
-        time: {             // 1/7/2024 
-          Date,
-          required: true,
-        },
+        time: [           // "time": ["{2024-01-09}" ,"{2024-01-10}"],
+          {Date , required: true},
+        ],
         duration: {        // 30 m
           type: Number,
           required: true
