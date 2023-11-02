@@ -1,7 +1,7 @@
 import { asyncErrorHandler } from "../../../utils/errorHandling.js";
 import patientModel from "../../../../DB/models/Patient.model.js";
-import changeEmail from "../../../utils/handlers/changeEmail.js";
 import doctorModel from "../../../../DB/models/Doctor.model.js";
+import changeEmail from "../function/changeEmail.js";
 
 const changeEmailController = asyncErrorHandler(async (req, res, next) => {
   if (req.originalUrl.includes("patient"))

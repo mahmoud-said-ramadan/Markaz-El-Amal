@@ -1,10 +1,10 @@
 import { StatusCodes } from "http-status-codes";
-import ErrorClass from "../errorClass.js";
-import { allMessages } from "../localizationHelper.js";
-import { asyncErrorHandler } from "../errorHandling.js";
+import { allMessages } from "../../../utils/localizationHelper.js";
+import ErrorClass from "../../../utils/errorClass.js";
 /*
 Needed Data => UserId (params)
 Return Data => Message , User
+Who authorized => Doctor, Patient
 */
 
 const getUser = (model) => {

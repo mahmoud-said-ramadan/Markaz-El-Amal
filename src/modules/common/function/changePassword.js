@@ -1,11 +1,12 @@
 import { StatusCodes } from "http-status-codes";
 import bcryptjs from "bcryptjs";
-import ErrorClass from "../errorClass.js";
-import { allMessages } from "../localizationHelper.js";
+import { allMessages } from "../../../utils/localizationHelper.js";
+import ErrorClass from "../../../utils/errorClass.js";
 
 /*
 Needed Data => (Old and New) password (body)
 Return Data => Message
+Who authorized => Doctor, Patient
 */
 const changePassword = (model) => {
   return async (req, res, next) => {

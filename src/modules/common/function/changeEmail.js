@@ -1,13 +1,14 @@
 import { StatusCodes } from "http-status-codes";
-import { generateConfirmCode } from "../code.js";
-import ErrorClass from "../errorClass.js";
-import { allMessages } from "../localizationHelper.js";
+import { allMessages } from "../../../utils/localizationHelper.js";
+import ErrorClass from "../../../utils/errorClass.js";
 import bcrypt from "bcryptjs";
 import { customAlphabet } from "nanoid";
-import sendEmail, { html } from "../email.js";
+import sendEmail, { html } from "../../../utils/email.js";
+import jwt from "jsonwebtoken";
 /*
 Needed Data => New email (body)
 Return Data => Message , new email hashed
+Who authorized => Doctor, Patient
 */
 const changeEmail = (model) => {
   return async (req, res, next) => {
@@ -37,13 +38,9 @@ const changeEmail = (model) => {
       );
     }
     //Generate OTP Code
-    const code = customAlphabet("0123456789", 5);
-    const OTP = {
-      code: code(5),
-      createdAt: Date.now(),
-      status: "confirmChange",
-    };
-    const htmlCode = html(`This Code For confirm your new email`, OTP.code);
+    const codeGenerator = customAlphabet("0123456789");
+    const code = codeGenerator(5);
+    const htmlCode = html(`This Code For confirm your new email`, code);
     //Send New Confirmation Mail
 
     await sendEmail({
@@ -53,15 +50,18 @@ const changeEmail = (model) => {
     });
     // console.log({code:codeStatus.code});
     const newCodeHashed = bcrypt.hashSync(
-      OTP.code,
+      code,
       parseInt(process.env.SALT_ROUND)
     );
 
-    await model.updateOne({ _id: req.user._id }, { OTP });
-
+    // await model.updateOne({ _id: req.user._id }, { OTP });
+    const codeToken = jwt.sign(
+      { code: newCodeHashed, date: Date.now() },
+      process.env.TOKEN_SIGNATURE
+    );
     return res
       .status(StatusCodes.ACCEPTED)
-      .json({ message: allMessages[req.query.ln].SUCCESS, newCodeHashed });
+      .json({ message: allMessages[req.query.ln].SUCCESS, codeToken });
   };
 };
 export default changeEmail;

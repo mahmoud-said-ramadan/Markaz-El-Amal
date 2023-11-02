@@ -1,13 +1,14 @@
 import { StatusCodes } from "http-status-codes";
-import ErrorClass from "../errorClass.js";
-import { allMessages } from "../localizationHelper.js";
+import { allMessages } from "../../../utils/localizationHelper.js";
+import ErrorClass from "../../../utils/errorClass.js";
 /*
 Needed Data => No data
 Return Data => Message , Users
+Who authorized => Doctor, Patient
 */
 
 const getAllUsers = (model) => {
- return  async (req, res, next) => {
+  return async (req, res, next) => {
     const users = await model.find(); // Search for  all users in DB
 
     // Validate that there is users exist in DB
