@@ -1,35 +1,9 @@
 import mongoose, { Schema, model } from "mongoose";
-import { imageSchema } from "../DB_Utils/imageSchema.js";
-import { codeSchema } from "../DB_Utils/codeSchema.js";
+import { personSchema } from "../DB_Utils/personSchema.js";
 
-const doctorSchema = new mongoose.Schema(
+const doctorSchema = new Schema(
   {
-    name: {
-      type: String,
-      required: true,
-      minLength: 2,
-      lowercase: true,
-    },
-    email: {
-      type: String,
-      unique: true,
-      required: true,
-      lowercase: true,
-    },
-    password: { type: String, required: true },
-    phone: { type: String },
-    loggedIn: { type: Boolean, default: false },
-    confirmed: { type: Boolean, default: false },
-    gender: {
-      type: String,
-      enum: ['male', 'female'],
-      required: false
-    },
-    image: imageSchema,
-    OTP: codeSchema,
-    customId: String,
-    DateOfBirth: { type: Date },
-    //--------- end shared
+    ...personSchema,
     rating: {
       type: Number,
       default: 0,
@@ -42,11 +16,31 @@ const doctorSchema = new mongoose.Schema(
       type: Number,
       required: false,
     },
+    appointment: {
+      type: Object,
+      properties: {
+        from: {             // 14
+          type: Number,
+          required: true,
+        },                   // 19
+        to: {
+          type: Number,
+          required: true,
+        },
+        time: [           // "time": ["{2024-01-09}" ,"{2024-01-10}"],
+          {Date , required: true},
+        ],
+        duration: {        // 30 m
+          type: Number,
+          required: true
+        }
+      },
+    },
   },
   {
     timestamps: true,
   }
 );
-const doctorModel = model("Doctor", doctorSchema ) ;
+const doctorModel = mongoose.models.Doctor || model("Doctor", doctorSchema);
 
-export default doctorModel;// doctorSchema.methods.greet = function() {
+export default doctorModel;
