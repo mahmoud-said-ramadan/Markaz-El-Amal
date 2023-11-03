@@ -2,21 +2,32 @@ import jwt from "jsonwebtoken";
 import { StatusCodes } from "http-status-codes";
 import { asyncErrorHandler } from "../utils/errorHandling.js";
 import ErrorClass from "../utils/errorClass.js";
-import userModel from "../../DB/models/user.model.js";
+import patientModel from "../../DB/models/Patient.model.js";
+import { allMessages } from "../utils/localizationHelper.js";
+import doctorModel from "../../DB/models/Doctor.model.js";
 
-export const roles = {
-  admin: "Admin",
-  user: "User",
+export const Roles = {
+  admin: "Admin", 
+  doctor: "Doctor", 
+  user: "Patient",
 };
-Object.freeze(roles);
+Object.freeze(Roles);
 export const auth = (roles = []) => {
   return asyncErrorHandler(async (req, res, next) => {
     const { authorization } = req.headers;
 
+    if (!authorization) {
+      return next(
+        new ErrorClass(
+          allMessages[req.query.ln].TOKEN_NOT_EXIST,
+          StatusCodes.BAD_REQUEST
+        )
+      );
+    }
     if (!authorization?.startsWith(process.env.BEARER_KEY)) {
       return next(
         new ErrorClass(
-          "authorization is required or In-Valid Bearer key",
+          allMessages[req.query.ln].BEARER_KEY,
           StatusCodes.BAD_REQUEST
         )
       );
@@ -24,33 +35,51 @@ export const auth = (roles = []) => {
 
     const token = authorization.split(process.env.BEARER_KEY)[1];
     if (!token) {
-      return next(new ErrorClass("token is required", StatusCodes.BAD_REQUEST));
+      return next(
+        new ErrorClass(
+          allMessages[req.query.ln].TOKEN_NOT_EXIST,
+          StatusCodes.BAD_REQUEST
+        )
+      );
     }
     const decoded = jwt.verify(token, process.env.TOKEN_SIGNATURE);
     if (!decoded?.id) {
       return next(
-        new ErrorClass("In-Valid token payload", StatusCodes.BAD_REQUEST)
-      );
-    }
-    const user = await userModel.findById(decoded.id);
-    if (!user) {
-      return next(
-        new ErrorClass("Not register account", StatusCodes.BAD_REQUEST)
-      );
-    }
-    if (!user.confirmed) {
-      return next(
         new ErrorClass(
-          "you must confirm your email before login",
-          StatusCodes.NOT_ACCEPTABLE
+          allMessages[req.query.ln].INVALID_PAYLOAD,
+          StatusCodes.BAD_REQUEST
         )
       );
     }
-    if (!roles.includes(user.role)) {
+
+    let user;
+    if (decoded.role == Roles.doctor) {
+      user = await doctorModel.findById(decoded.id);
+    }
+    if (decoded.role == Roles.user) {
+      user = await patientModel.findById(decoded.id);
+    }
+    if (!user) {
       return next(
         new ErrorClass(
-          "Not authorized user to access here",
+          allMessages[req.query.ln].USER_NOT_EXIST,
+          StatusCodes.NOT_FOUND
+        )
+      );
+    }
+    if (!roles.includes(decoded.role)) {
+      return next(
+        new ErrorClass(
+          allMessages[req.query.ln].UNAUTHORIZED,
           StatusCodes.FORBIDDEN
+        )
+      );
+    }
+    if (!user.loggedIn) {
+      return next(
+        new ErrorClass(
+          allMessages[req.query.ln].LOGIN_FIRST,
+          StatusCodes.UNAUTHORIZED
         )
       );
     }
