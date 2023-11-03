@@ -8,20 +8,18 @@ import changeEmailController from "./controller/changeEmail.js";
 import logoutController from "./controller/logout.js";
 import updatePersonalInfoController from "./controller/updatePersonalInfo.js";
 import getUserController from "./controller/getUser.js";
-import getAllUsersController from "./controller/getAllUsers.js";
 
 const router = Router();
 
 // .route("/:id")
 router
-  .route("/")
-  .get(auth(commonEndPoint.getAllUser), getAllUsersController)
+  .route(["/", "/:id"])
+  .get(auth(commonEndPoint.getUser), getUserController)
   .put(
     auth(commonEndPoint.update),
     fileUpload(filesValidation.image).single("image"),
     updatePersonalInfoController
   );
-router.get("/:id", auth(commonEndPoint.getUser), getUserController);
 router.patch(
   "/changePassword",
   auth(commonEndPoint.update),
