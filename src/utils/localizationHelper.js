@@ -25,6 +25,7 @@ export const allMessages =
         NOTE_DELETE_USER: "user will delete permenantly after 12:00 am",
         FAIL_SEND_EMAIL: "failed to send email",
         FAIL_PASS_MATCHING: "passwords mismatch",
+        FAIL_OLD_PASS_MATCHING: "old password isn't correct",
         FAIL_PASS: "invalid password",
         PASSWORD_SAME_AS_OLD_PASSWORD: "this password same as the old password",
         FAIL_UPLOAD_PIC: "upload image failed",
@@ -78,7 +79,11 @@ export const allMessages =
         PASSWORD_CHANGED: "token expired after change password plz log in again with new password",
         SEND_PHONE_OR_EMAIL: "please send email or phone",
         LOGOUT_SUCCESS:"log out successfully",
-        UNAUTHORIZED:"You are not authorized to access this endpoint"
+        UNAUTHORIZED:"You are not authorized to access this endpoint",
+        NO_USER_FOUND:"There is no user found",
+        CODE_DURATION_NOT_ENDED:"You Can NOT Ask For a new Code, Until 5 Mints from The Last Sended One!",
+        EMAIL_NOT_FOUND:"NOT REGISTERED!... Please signUp!",
+        EMAIL_SAME_AS_OLD:"This is your old email, You must choose different email"
     },
     ar: {
         LOGOUT_SUCCESS:"تم تسجيل الخروج بنجاح",
@@ -112,7 +117,7 @@ export const allMessages =
         PASSWORD_SAME_AS_OLD_PASSWORD: "كلمة السر الجديدة مشابهه للقديمة",
         VALID_ACCOUNT: "الحساب صحيح",
         NOT_VALID_ACCOUNT: "الحساب غير صحيح",
-        EMAIL_EXIST_NOT_CONFIRMED: "الحساب مجوجود بالفعل ولكن غير مفعل",
+        EMAIL_EXIST_NOT_CONFIRMED: "الحساب موجود بالفعل ولكن غير مفعل",
         IN_VALID_URL: "خطأ فى الرابط",
         FILE_VALIDATION_ERROR: "خطأ فى الملف المرسل",
         FILE_IS_REQUIRED: "الملف مطلوب",
@@ -142,7 +147,8 @@ export const allMessages =
         FAIL_UPDATE_USER: "حدث خطأ أثناء تحديث بيانات الحساب",
         NOTE_DELETE_USER: "تنبيه سيتم حذف البيانات نهائياً الساعه 12:00 صباحاً",
         FAIL_SEND_EMAIL: "حدث خطأ أثناء إرسال الايميل",
-        FAIL_PASS_MATCHING: "الرمز القديم غي صحيح",
+        FAIL_PASS_MATCHING: "الرمز القديم غير صحيح",
+        FAIL_OLD_PASS_MATCHING: "الرمز القديم غير صحيح",
         FAIL_UPLOAD_PIC: "حدث خطأ أثناء رفع الصوره",
         SUCCESS_ADD_POST: "تم اضافة الوجبة بنجاح",
         FAIL_ADD_POST: "حدث خطأ اثناء اضافة الوجبة",
@@ -160,6 +166,11 @@ export const allMessages =
         NOT_AUTHORIZED: "غير مصرح للمستخدم بإتخاز القرار",
         NAME_EXIST: "الإسم مستخدم من قبل",
         CHECK_YOUY_INBOX: "تفحص حسابك الشخصى",
+        NO_USER_FOUND:"لم يتم العثور على مستخدم",
+        CODE_DURATION_NOT_ENDED:"!لا يمكنك طلب رمز جديد ، حتى 5 دقائق من آخر رمز مرسل",
+        EMAIL_NOT_FOUND:"غير مسجل... الرجاء التسجيل",
+        EMAIL_SAME_AS_OLD:"هذا هو بريدك الإلكتروني القديم ، يجب عليك اختيار بريد إلكتروني مختلف"
+
 
     }
 
