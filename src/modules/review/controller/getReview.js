@@ -1,7 +1,7 @@
-import reviewModel from "../../../../DB/models/Review.model";
-import ErrorClass from "../../../utils/errorClass";
+import reviewModel from "../../../../DB/models/Review.model.js";
+import ErrorClass from "../../../utils/errorClass.js";
 import { asyncErrorHandler } from "../../../utils/errorHandling.js";
-import { allMessages } from "../../../utils/localizationHelper";
+import { allMessages } from "../../../utils/localizationHelper.js";
 import { StatusCodes } from "http-status-codes";
 /**
  * Needed data => id 'review' (params) (get one review) or doctorId (body) (get all reviews)
@@ -10,18 +10,15 @@ import { StatusCodes } from "http-status-codes";
  */
 const getReview = asyncErrorHandler(async (req, res, next) => {
   // Get specific review or all reviews from DB (depends on there's id sended through params or not)
-  let Reviews = req.param.id
-    ? await reviewModel.findById(req.param.id).populate("doctorId")
-    : await reviewModel
-        .find({ doctorId: req.body.doctorId })
-        .populate("doctorId");
+  let reviews = req.params.id
+    ? await reviewModel.findById(req.params.id)
+    : await reviewModel.find({ doctorId: req.body.doctorId });
 
   // If no one make a review yet
-  if (!Reviews && Reviews?.length) {
+  if (!reviews || reviews.length == 0) {
     return next(
       new ErrorClass(
-        allMessages[req.query.ln].NO_DATA_FOUND,
-        codes,
+        allMessages[req.query.ln].NO_REVIEW_FOUND,
         StatusCodes.NOT_FOUND
       )
     );
@@ -29,7 +26,7 @@ const getReview = asyncErrorHandler(async (req, res, next) => {
 
   return res
     .status(StatusCodes.ACCEPTED)
-    .json({ message: allMessages[req.query.ln].SUCCESS, Reviews });
+    .json({ message: allMessages[req.query.ln].SUCCESS, reviews });
 });
 
 export default getReview;
