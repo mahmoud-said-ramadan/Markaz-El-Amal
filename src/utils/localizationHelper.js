@@ -83,7 +83,8 @@ export const allMessages =
         NO_USER_FOUND:"There is no user found",
         CODE_DURATION_NOT_ENDED:"You Can NOT Ask For a new Code, Until 5 Mints from The Last Sended One!",
         EMAIL_NOT_FOUND:"NOT REGISTERED!... Please signUp!",
-        EMAIL_SAME_AS_OLD:"This is your old email, You must choose different email"
+        EMAIL_SAME_AS_OLD:"This is your old email, You must choose different email",
+        NO_REVIEW_FOUND:"There's no review for this doctor yet"
     },
     ar: {
         LOGOUT_SUCCESS:"تم تسجيل الخروج بنجاح",
@@ -169,7 +170,8 @@ export const allMessages =
         NO_USER_FOUND:"لم يتم العثور على مستخدم",
         CODE_DURATION_NOT_ENDED:"!لا يمكنك طلب رمز جديد ، حتى 5 دقائق من آخر رمز مرسل",
         EMAIL_NOT_FOUND:"غير مسجل... الرجاء التسجيل",
-        EMAIL_SAME_AS_OLD:"هذا هو بريدك الإلكتروني القديم ، يجب عليك اختيار بريد إلكتروني مختلف"
+        EMAIL_SAME_AS_OLD:"هذا هو بريدك الإلكتروني القديم ، يجب عليك اختيار بريد إلكتروني مختلف",
+        NO_REVIEW_FOUND:"لا يوجد مراجعة لهذا الطبيب حتى الآن",
 
 
     }
