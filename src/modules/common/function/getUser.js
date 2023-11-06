@@ -15,7 +15,7 @@ const getUser = (model) => {
       : await model.find();
 
     // Validate that there is users exist in DB
-    if (!users && !users?.length) {
+    if (!users || users.length == 0) {
       return next(
         new ErrorClass(allMessages[req.query.ln].NO_USER_FOUND),
         StatusCodes.NOT_FOUND
