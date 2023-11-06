@@ -2,6 +2,9 @@ import Router from "express";
 import { auth } from "../../middleware/auth.js";
 import reviewEndpoint from "./review.endpoint.js";
 import getReview from "./controller/getReview.js";
+import addReview from "./controller/addReview.js";
+import updateReview from "./controller/updateReview.js";
+import deleteReview from "./controller/deleteReview.js";
 
 const router = Router();
 
