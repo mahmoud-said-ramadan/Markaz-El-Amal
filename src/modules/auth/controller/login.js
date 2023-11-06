@@ -7,6 +7,7 @@ import { allMessages } from "../../../utils/localizationHelper.js";
 import { asyncErrorHandler } from "../../../utils/errorHandling.js";
 /**
  * authorized: Admin - doctor - patient
+ * Logic: check if email found before ? ✔️: ❎ --> Check if email is confirmed --> compare password and hash password in DB --> Generate access token valid ( 2 m ) 
  * input: email - password
  * output: accessToken
  */
@@ -39,5 +40,5 @@ export const login = asyncErrorHandler(async (req, res, next) => {
     // const refreshToken = generateToken({payload: {id: user._id , email:user.email} })
     user.loggedIn = true
     await user.save() 
-    return res.status(StatusCodes.OK).json({ message: "Done", accessToken });
+    return res.status(StatusCodes.OK).json({ message: allMessages[req.query.ln].SUCCESS, accessToken });
   });
