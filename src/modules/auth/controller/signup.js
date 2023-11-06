@@ -1,4 +1,5 @@
 import { hash, compare } from "../../../utils/HashAndCompare.js";
+import jwt from "jsonwebtoken";
 import ErrorClass from "../../../utils/errorClass.js";
 import { StatusCodes } from "http-status-codes";
 import crypto from "crypto-js";
@@ -8,7 +9,17 @@ import { code, role } from "../../../utils/shared.js";
 import { allMessages } from "../../../utils/localizationHelper.js";
 import sendEmail, { html } from "../../../utils/email.js";
 import { asyncErrorHandler } from "../../../utils/errorHandling.js";
-//-----------pre signup
+import {
+  generateToken,
+  verifyToken,
+} from "../../../utils/GenerateAndVerifyToken.js";
+/**
+ * Pre signup ✔️
+ * authorized: Admin - doctor - patient
+ * Logic: check if email found before ? ❎ : ✔️ --> Send a confirmation email to a user to confirm their email address 
+ * input: email
+ * output: Token that have hashing of OTP and will expire after 5 min
+ */
 export const preSignup = asyncErrorHandler(async (req, res, next) => {
   const { email } = req.body;
   const model = role(req.originalUrl);
@@ -46,27 +57,54 @@ export const preSignup = asyncErrorHandler(async (req, res, next) => {
   }
   // Hashing OTP
   const hashOTP = hash({ plaintext: OTP });
-  return res
-    .status(StatusCodes.OK)
-    .json({
-      message: allMessages[req.query.ln].CHECK_YOUY_INBOX,
-      OTP: hashOTP,
-    });
+  // generate token
+  const token = generateToken({ payload: { OTP: hashOTP }, expiresIn: 60 * 5 });
+  return res.status(StatusCodes.OK).json({
+    message: allMessages[req.query.ln].CHECK_YOUY_INBOX,
+    token,
+  });
 });
-//------------Signup
+/**
+ * Signup ✔️
+ * authorized: Admin - doctor - patient
+ * Logic: Decoded token --> Token expied? ❎ : ✔️ --> compare OTP and hashOTP ? ✔️ : ❎ --> create account and upload image in cloudinary
+ * input: email - password - cPassword - token - OTP - phone? - image? - DateOfBirth? - gender?
+ * output: All data for testing
+ */
 export const signup = asyncErrorHandler(async (req, res, next) => {
-  const { email , password, hashOTP, OTP } = req.body;
+  const { email, password, token, OTP } = req.body;
+  /**
+   * decoded token
+   */
+  try {
+    var decoded = verifyToken({ token });
+    if (!decoded?.OTP) {
+      return next(
+        new ErrorClass(
+          allMessages[req.query.ln].INVALID_PAYLOAD,
+          StatusCodes.BAD_REQUEST
+        )
+      );
+    }
+  } catch (err) {
+    if (err instanceof jwt.TokenExpiredError) {
+      return res
+        .status(401)
+        .json({ message: allMessages[req.query.ln].TOKEN_EXPIRED });
+    } else {
+      return res
+        .status(401)
+        .json({ message: allMessages[req.query.ln].UNAUTHORIZED });
+    }
+  }
   /**
    * compare OTP and hashOTP
    */
-  const match = compare({ plaintext: OTP, hashValue: hashOTP });
+  const match = compare({ plaintext: OTP, hashValue: decoded.OTP });
   if (!match) {
-    return next(
-      new ErrorClass(
-        allMessages[req.query.ln].INVALID_CODE,
-        StatusCodes.BAD_REQUEST
-      )
-    );
+    return res
+      .status(400)
+      .json({ ErrorMessage: allMessages[req.query.ln].INVALID_INFO });
   }
   /**
    * Get model ( doctor || patient || admin )
@@ -109,7 +147,7 @@ export const signup = asyncErrorHandler(async (req, res, next) => {
     customId: nanoid(),
     DateOfBirth: req.body.DateOfBirth,
     gender: req.body.gender,
-    confirmed: true
+    confirmed: true,
   });
   /**
    * input: image?
