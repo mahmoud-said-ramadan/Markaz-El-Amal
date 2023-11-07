@@ -1,4 +1,4 @@
-import mongoose, { Schema, model } from "mongoose";
+import mongoose, { Schema, Types, model } from "mongoose";
 import { personSchema } from "../DB_Utils/personSchema.js";
 
 const doctorSchema = new Schema(
@@ -14,8 +14,6 @@ const doctorSchema = new Schema(
     },
     appointment: [
       {
-        type: Object,
-        properties: {
           from: {           // 14
             type: Number,
             required: true,
@@ -24,9 +22,8 @@ const doctorSchema = new Schema(
             type: Number,
             required: true,
           },
-          time: { Date, required: true }, // yyyy-MM-dd
+          time: { type: Date, required: true }, // yyyy-MM-dd
         },
-      },
     ],
     duration: {         // 30 m
       type: Number,
@@ -34,6 +31,10 @@ const doctorSchema = new Schema(
     },
     avgRate: { type: Number, default: 0 },
     rateNo: { type: Number, default: 0 },
+    categories: [{
+      type: Types.ObjectId,
+      ref: "Category",
+    }]
   },
   {
     timestamps: true,
