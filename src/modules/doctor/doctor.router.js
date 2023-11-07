@@ -1,6 +1,11 @@
 import Router from "express";
 import { auth } from "../../middleware/auth.js";
 import doctorEndpoint from "./doctor.endpoint.js";
+import addDate from "./controller/addDate.js";
+import updateDate from "./controller/updateDate.js";
+import deleteDate from "./controller/deleteDate.js";
 const router = Router();
-
+router.patch("/addDate", auth(doctorEndpoint.modifyDate), addDate);
+router.patch("/updateDate", auth(doctorEndpoint.modifyDate), updateDate);
+router.delete("/deleteDate", auth(doctorEndpoint.modifyDate), deleteDate);
 export default router;
