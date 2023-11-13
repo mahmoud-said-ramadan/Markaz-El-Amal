@@ -87,6 +87,7 @@ export const allMessages =
         TOKEN_EXPIRED:"Token expired",
         SUCCESS_DELETED:"Deleted successfully",
         DUPLICATE_NAME:"Duplicated name",
+        NO_REVIEW_FOUND:"There's no review found",
     },
     ar: {
         LOGOUT_SUCCESS:"تم تسجيل الخروج بنجاح",
@@ -176,7 +177,7 @@ export const allMessages =
         TOKEN_EXPIRED: "انتهت صلاحية الرمز المميز",
         SUCCESS_DELETED: "حذف بنجاح",
         DUPLICATE_NAME:"اسم مكرر",
-
+        NO_REVIEW_FOUND:"لم يتم العثور علي تقييم",
     }
 
 }
