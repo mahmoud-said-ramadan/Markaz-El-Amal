@@ -6,6 +6,7 @@ import patientRouter from "./modules/patient/patient.router.js";
 import commonRouter from "./modules/common/common.router.js";
 import authRouter from "./modules/auth/auth.router.js";
 import doctorRouter from "./modules/doctor/doctor.router.js";
+import categoryRouter from "./modules/category/category.router.js";
 const initApp = (app, express) => {
   //convert Buffer Data
   app.use(express.json({}));
@@ -16,6 +17,7 @@ const initApp = (app, express) => {
   app.use(["/patient", "/doctor"], commonRouter);
   app.use("/auth", authRouter);
   app.use("/patient", patientRouter);
+  app.use("/category", categoryRouter);
   app.all("*", (req, res, next) => {
     return next(new ErrorClass(allMessages.en.IN_VALID_URL));
   });
