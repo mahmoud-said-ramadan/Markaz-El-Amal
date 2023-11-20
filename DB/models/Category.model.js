@@ -1,55 +1,40 @@
 import mongoose, { Schema, Types, model } from "mongoose";
-import { imageSchema, name } from "../DB_Utils/imageSchema.js";
+import { imageSchema } from "../DB_Utils/imageSchema.js";
 
 const categorySchema = new Schema(
   {
     name: {
-      type: Object,
-      properties: {
         ar: {
           type: String,
           unique: true,
           lowercase: true,
+          required: true,
         },
         en: {
           type: String,
           unique: true,
           lowercase: true,
+          required: true,
         },
-      },
-        validate: {
-          validator: function(v) {
-            return Object.keys(v).length === 2 || v.ar && v.en;
-          },
-          message: props => `${props.value} is not a valid name object`
-        },
-      required: true,
       },
       slug: {
-        type: Object,
-        properties: {
           ar: {
             type: String,
             unique: true,
             lowercase: true,
+            required: true,
           },
           en: {
             type: String,
             unique: true,
             lowercase: true,
+            required: true,
           },
-        },
-          validate: {
-            validator: function(v) {
-              return Object.keys(v).length === 2 || v.ar && v.en;
-            },
-            message: props => `${props.value} is not a valid slug object`
-          },
-        required: true,
         },
     image: { type: imageSchema, required: true },
     isDeleted: { type: Boolean, default: false },
-    // createdBy: { type: Types.ObjectId, ref: "Admin",}
+    createdBy: { type: Types.ObjectId, ref: "Admin"},
+    customId: { type: String },
   },
   {
     timestamps: true,
