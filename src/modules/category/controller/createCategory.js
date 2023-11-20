@@ -4,17 +4,18 @@ import cloudinary from "../../../utils/cloudinary.js";
 import ErrorClass from "../../../utils/errorClass.js";
 import { allMessages } from "../../../utils/localizationHelper.js";
 import { StatusCodes } from "http-status-codes";
+import { nanoid } from "nanoid";
 /**
  * Create category ✔️
  * authorized: Admin
  * Logic: check if name of category if found before then iupload image on cloudinary and create category
  * input: name of category , image
- * output: created
+ * output: msg - Data of new category 
  */
 export const createCategory = async (req, res, next) => {
-  const { en , ar } = req.body;
+  const { nameEN , nameAR } = req.body;
   //Must be a unique name
-  if (await categoryModel.findOne({ name: { en: en, ar: ar } })) {
+  if (await categoryModel.findOne({ name: { en: nameEN, ar: nameAR } })) {
     return next(
       new ErrorClass(
         `${allMessages[req.query.ln].DUPLICATE_NAME}`,
@@ -22,25 +23,35 @@ export const createCategory = async (req, res, next) => {
       )
     );
   }
-  //Upload image in cloudinary
+  const customId = nanoid(5)
+  //Upload image on cloudinary
   const { secure_url, public_id } = await cloudinary.uploader.upload(
     req.file.path,
-    { folder: `${process.env.APP_NAME}/category` }
+    { folder: `${process.env.APP_NAME}/category/${customId}` }
   );
   //Create category
   const category = await categoryModel.create({
     name: {
-      en: en,
-      ar: ar,
+      en: nameEN,
+      ar: nameAR,
     },
     slug: {
-      en: slugify(en, "-"),
-      ar: slugify(ar, "-"),
+      en: slugify(nameEN, "-"),
+      ar: slugify(nameAR, "-"),
     },
     image: { secure_url, public_id },
-    // createdBy: req.user._id
+    createdBy: req.user._id,
+    customId
   });
+  if (!category) {
+    return next(
+      new ErrorClass(
+        `${allMessages[req.query.ln].FAIL_CREATE_CATEGORY}`,
+        StatusCodes.CONFLICT
+      )
+    );
+  }
   return res
     .status(201)
-    .json({ message: `${allMessages[req.query.ln].SUCCESS}`, category });
+    .json({ message: `${allMessages[req.query.ln].SUCCESS_CREATE_CATEGORY}`, category });
 };
