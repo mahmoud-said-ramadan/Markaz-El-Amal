@@ -2,8 +2,8 @@ import { Roles } from "../../middleware/auth.js";
 
  const patientEndPoint = {
   getAllUser: [Roles.admin],
-  getUser: [Roles.user, Roles.doctor ,Roles.admin],
-  update: [Roles.user, Roles.doctor],
+  getUser: [Roles.patient, Roles.doctor ,Roles.admin],
+  update: [Roles.patient, Roles.doctor],
 
 };
 export default patientEndPoint

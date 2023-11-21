@@ -9,7 +9,7 @@ import doctorModel from "../../DB/models/Doctor.model.js";
 export const Roles = {
   admin: "Admin", 
   doctor: "Doctor", 
-  user: "Patient",
+  patient: "Patient",
 };
 Object.freeze(Roles);
 export const auth = (roles = []) => {
@@ -56,7 +56,7 @@ export const auth = (roles = []) => {
     if (decoded.role == Roles.doctor) {
       user = await doctorModel.findById(decoded.id);
     }
-    if (decoded.role == Roles.user) {
+    if (decoded.role == Roles.patient) {
       user = await patientModel.findById(decoded.id);
     }
     if (!user) {
