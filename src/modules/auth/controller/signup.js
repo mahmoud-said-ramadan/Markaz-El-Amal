@@ -58,7 +58,7 @@ export const preSignup = asyncErrorHandler(async (req, res, next) => {
   // Hashing OTP
   const hashOTP = hash({ plaintext: OTP });
   // generate token
-  const token = generateToken({ payload: { OTP: hashOTP }, expiresIn: 60 * 5 });
+  const token = generateToken({ payload: { OTP: hashOTP , email}, expiresIn: 60 * 5 });
   return res.status(StatusCodes.OK).json({
     message: allMessages[req.query.ln].CHECK_YOUY_INBOX,
     token,
@@ -69,7 +69,7 @@ export const preSignup = asyncErrorHandler(async (req, res, next) => {
  * authorized: Admin - doctor - patient
  * Logic: Decoded token --> Token expied? ❎ : ✔️ --> compare OTP and hashOTP ? ✔️ : ❎ --> create account and upload image in cloudinary
  * input: email - password - cPassword - token - OTP - phone? - image? - DateOfBirth? - gender?
- * output: All data for testing
+ * output: msg
  */
 export const signup = asyncErrorHandler(async (req, res, next) => {
   const { email, password, token, OTP } = req.body;
@@ -78,7 +78,7 @@ export const signup = asyncErrorHandler(async (req, res, next) => {
    */
   try {
     var decoded = verifyToken({ token });
-    if (!decoded?.OTP) {
+    if (!decoded?.OTP || email !== decoded.email) {
       return next(
         new ErrorClass(
           allMessages[req.query.ln].INVALID_PAYLOAD,
@@ -88,13 +88,19 @@ export const signup = asyncErrorHandler(async (req, res, next) => {
     }
   } catch (err) {
     if (err instanceof jwt.TokenExpiredError) {
-      return res
-        .status(401)
-        .json({ message: allMessages[req.query.ln].TOKEN_EXPIRED });
+      return next(
+        new ErrorClass(
+          allMessages[req.query.ln].TOKEN_EXPIRED,
+          StatusCodes.UNAUTHORIZED
+        )
+      );
     } else {
-      return res
-        .status(401)
-        .json({ message: allMessages[req.query.ln].UNAUTHORIZED });
+      return next(
+        new ErrorClass(
+          allMessages[req.query.ln].UNAUTHORIZED,
+          StatusCodes.UNAUTHORIZED
+        )
+      );
     }
   }
   /**
@@ -102,9 +108,12 @@ export const signup = asyncErrorHandler(async (req, res, next) => {
    */
   const match = compare({ plaintext: OTP, hashValue: decoded.OTP });
   if (!match) {
-    return res
-      .status(400)
-      .json({ ErrorMessage: allMessages[req.query.ln].INVALID_INFO });
+    return next(
+      new ErrorClass(
+        allMessages[req.query.ln].INVALID_INFO,
+        StatusCodes.BAD_REQUEST
+      )
+    );
   }
   /**
    * Get model ( doctor || patient || admin )
@@ -169,8 +178,15 @@ export const signup = asyncErrorHandler(async (req, res, next) => {
     );
     newUser.image = { secure_url, public_id };
   }
+  switch (req.params.role) {
+    case 'doctor':
+        newUser.categories = req.body.categories
+        newUser.bio = req.body.bio
+        newUser.duration = req.body.duration      
+      break;
+  }
   await newUser.save();
   return res
-    .status(StatusCodes.ACCEPTED)
-    .json({ message: allMessages[req.query.ln].CHECK_YOUY_INBOX, newUser });
+    .status(StatusCodes.CREATED)
+    .json({ message: allMessages[req.query.ln].ACCOUNT_CREATED });
 });
