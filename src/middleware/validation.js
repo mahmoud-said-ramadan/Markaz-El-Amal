@@ -13,9 +13,18 @@ export const generalFields = {
     maxDomainSegments: 4,
     tlds: { allow: ["com", "net"] },
   }),
-  password: joi.string().regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/),
+  password: joi
+    .string()
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+    ),
   cPassword: joi.string(),
+  code: joi.string().regex(/^[0-9]{5}$/),
   id: joi.string().custom(validateObjectId),
+  phone: joi
+    .string()
+    .trim()
+    .pattern(/^01[0-2,5]{1}[0-9]{8}$/),
   file: joi
     .object({
       size: joi.number().positive(),
