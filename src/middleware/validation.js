@@ -13,7 +13,7 @@ export const generalFields = {
     maxDomainSegments: 4,
     tlds: { allow: ["com", "net"] },
   }),
-  password: joi.string(),
+  password: joi.string().regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/),
   cPassword: joi.string(),
   id: joi.string().custom(validateObjectId),
   file: joi
