@@ -99,6 +99,12 @@ export const allMessages =
         RESERVATION_CONFIRM: "Reservation confirmed successfully",
         RESERVATION_CANCEL_BEFORE: "Reservation already canceled before",
         RESERVATION_CONFIRM_BEFORE: "Reservation already confirmed before",
+        //category
+        DUPLICATE_NAME_CATERGORY: "Duplicated name of category",
+        SUCCESS_CREATE_CATEGORY: "Create category successfully",
+        SUCCESS_EDIT_CATEGORY: "Category updated successfully",
+        FAIL_CREATE_CATEGORY: "Category creation failed",
+        FAIL_EDIT_CATEGORY: "Category update failed",
     },
     ar: {
         LOGOUT_SUCCESS:"تم تسجيل الخروج بنجاح",
@@ -200,6 +206,12 @@ export const allMessages =
         RESERVATION_CONFIRM: "تم تأكيد الحجز بنجاح",
         RESERVATION_CANCEL_BEFORE: "تم إلغاء الحجز بالفعل من قبل",
         RESERVATION_CONFIRM_BEFORE: "تم تأكيد الحجز بالفعل من قبل",
+        //category
+        DUPLICATE_NAME_CATERGORY: "إسم الفئة مكرر",
+        SUCCESS_CREATE_CATEGORY: "تم إنشاء الفئة بنجاح",
+        SUCCESS_EDIT_CATEGORY: "تم تحديث الفئة بنجاح",
+        FAIL_CREATE_CATEGORY: "فشل إنشاء الفئة",
+        FAIL_EDIT_CATEGORY: "فشل تحديث الفئة ",
     }
 
 }
