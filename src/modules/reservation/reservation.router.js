@@ -23,7 +23,7 @@ router.patch(
   );
 router.get(
     "/doctor/",
-    auth(reservationEndpoint.confirmReservation),
+    auth(reservationEndpoint.reservationNeedConfirm),
     reservationNeedConfirm
   );
 export default router;
