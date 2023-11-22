@@ -15,10 +15,6 @@ router
     fileUpload(filesValidation.image).single("image"),
     createCategory
   )
-  .get(
-    auth(categoryEndPoint.get),
-    getCategory
-  )
 
   router
   .route(["/admin/:id"])
@@ -31,9 +27,17 @@ router
     auth(categoryEndPoint.common),
     deleteCategory
   )
+
+  router
+  .route(["/:role/:id"])
   .get(
     auth(categoryEndPoint.get),
     getCategory
   )
 
+  router.route(["/:role"])
+  .get(
+    auth(categoryEndPoint.get),
+    getCategory
+  )
 export default router;
