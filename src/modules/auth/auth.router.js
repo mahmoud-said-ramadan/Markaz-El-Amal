@@ -23,6 +23,7 @@ router.post("/:role/preSignup", validation(validators.generate), preSignup);
 router.post(
   "/:role/signup",
   fileUpload(filesValidation.image).fields([{ name: "image", maxCount: 1 }]),
+  validation(validators.signup),
   signup
 );
 /**
@@ -31,11 +32,11 @@ router.post(
  * input: email - password
  * output: accessToken
  */
-router.post("/:role/login", login);
+router.post("/:role/login",login);
 /**
  * Forget password ✔️
  * authorized: Admin - doctor - patient
- * input: email 
+ * input: email
  * output: Sent email
  */
 router.post(
@@ -47,7 +48,7 @@ router.post(
  * Reset password ✔️
  * authorized: Admin - doctor - patient
  * input: OTP, email , newPassword
- * output: 
+ * output:
  */
 router.post("/:role/password/reset", validation(validators.reset), confirm);
 // router.post("/:role/confirm", validation(validators.confirm), confirm);
