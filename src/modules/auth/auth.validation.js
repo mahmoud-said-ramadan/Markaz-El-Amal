@@ -9,11 +9,8 @@ export const signup = {
       // will make a password pattern later
       password: generalFields.password.required(),
       cPassword: joi.string().valid(joi.ref("password")).required(),
-      phone: joi
-        .string()
-        .trim()
-        .pattern(/^01[0-2,5]{1}[0-9]{8}$/),
-      OTP: joi.string().length(5).required(),
+      phone: generalFields.phone.required(),
+      OTP: generalFields.code.required(),
       hashOTP: joi.string().required(),
     })
     .required(),
@@ -77,11 +74,7 @@ export const reset = {
     .object({
       newPassword: generalFields.password.required(),
       email: generalFields.email.lowercase().required(),
-      OTP: joi
-        .string()
-        .length(5)
-        .regex(/^[0-9]{5}$/)
-        .required(),
+      OTP: generalFields.code.required(),
     })
     .required(),
   params: joi
