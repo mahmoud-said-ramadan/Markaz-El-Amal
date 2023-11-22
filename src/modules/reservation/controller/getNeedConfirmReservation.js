@@ -5,9 +5,9 @@ import { allMessages } from "../../../utils/localizationHelper.js";
 import reservationModel from "../../../../DB/models/Reservation.model.js";
 /**
  * authorized: Doctor
- * logic: if status cancelled? ❎ : ✔️ Change status of reservation -> status == "booked"
- * input: reservationId
- * output: msg
+ * logic: searh reservations of doctor to confirm
+ * input: 
+ * output: msg ,reservations
  */
 const reservationNeedConfirm = asyncErrorHandler(async (req, res, next) => {
   return res
