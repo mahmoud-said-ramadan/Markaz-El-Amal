@@ -44,7 +44,7 @@ export const confirm = asyncErrorHandler(async (req, res, next) => {
     userExist.OTP?.status !== status ||
     new Date() > new Date(expired.setMinutes(expired.getMinutes() + 5))
   ) {
-    return next(new ErrorClass(allMessages[req.query.ln].INVALID_CODE, 400));
+    return next(new ErrorClass(`${allMessages[req.query.ln].INVALID_CODE_EXPIRE}`, 400));
   }
   let message;
   switch (status) {
@@ -73,7 +73,7 @@ export const confirm = asyncErrorHandler(async (req, res, next) => {
       await model.findByIdAndUpdate(userExist._id, {
         password: newPassword,
       });
-      message = "Password Changed Successfully!";
+      message = `${allMessages[req.query.ln].PASSWORD_CHANGED}`;
       break;
     default:
       await model.updateOne({ _id: userExist._id }, { confirmed: true });
