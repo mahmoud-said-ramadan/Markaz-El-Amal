@@ -6,35 +6,43 @@ const doctorSchema = new Schema(
     ...personSchema,
     bio: {
       type: String,
-      required: false,
-    },
-    consultationFee: {
-      type: Number,
-      required: false,
+      required: true,
     },
     appointment: [
       {
-          from: {           // 14
-            type: Number,
-            required: true,
-          },              // 19
-          to: {
-            type: Number,
-            required: true,
-          },
-          time: { type: Date, required: true }, // yyyy-MM-dd
+        from: {
+          // 14
+          type: Number,
+          required: true,
+        }, // 19
+        to: {
+          type: Number,
+          required: true,
         },
+        time: { type: Date, required: true }, // yyyy-MM-dd
+        id: { type: Types.ObjectId, ref: "Category", required: true },
+      },
     ],
-    duration: {         // 30 m
+    duration: {
+      // 30 m
       type: Number,
-      default: 10 
+      required: true,
     },
     avgRate: { type: Number, default: 0 },
     rateNo: { type: Number, default: 0 },
-    categories: [{
-      type: Types.ObjectId,
-      ref: "Category",
-    }]
+    categories: [
+      {
+        id: { type: Types.ObjectId, ref: "Category", required: true },
+        consultationFee: {
+          type: Number,
+          required: true,
+        },
+        _id: false,
+      },
+    ],
+    confirmReservation: [
+      { type: Types.ObjectId, ref: "Reservation", required: true },
+    ],
   },
   {
     timestamps: true,
