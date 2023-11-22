@@ -89,7 +89,16 @@ export const allMessages =
         DUPLICATE_NAME:"Duplicated name",
         NO_REVIEW_FOUND:"There's no review found",
         //Auth - Signup
-        ACCOUNT_CREATED:"Account created successfully"
+        ACCOUNT_CREATED:"Account created successfully",
+        //reservation
+        DUPLICATE_APPOINTMENT: "Data cannot be entered. There are duplicate appointments",
+        NOT_AVAILABLE_RESERVATION: "This reservation is not available",
+        RESERVATION_MAKE: "Your reservation has been completed successfully",
+        RESERVATION_COMPLETE: "Reservation already finished",
+        RESERVATION_CANCEL: "Reservation canceled successfully",
+        RESERVATION_CONFIRM: "Reservation confirmed successfully",
+        RESERVATION_CANCEL_BEFORE: "Reservation already canceled before",
+        RESERVATION_CONFIRM_BEFORE: "Reservation already confirmed before",
     },
     ar: {
         LOGOUT_SUCCESS:"تم تسجيل الخروج بنجاح",
@@ -181,7 +190,16 @@ export const allMessages =
         DUPLICATE_NAME:"اسم مكرر",
         NO_REVIEW_FOUND:"لم يتم العثور علي تقييم",
         //Auth - Signup
-        ACCOUNT_CREATED:"الحساب اقيم بنجاح"
+        ACCOUNT_CREATED:"الحساب اقيم بنجاح",
+        //reservation
+        DUPLICATE_APPOINTMENT: "لا يمكن ادخال البيانات يوجد تكرار مواعيد",
+        NOT_AVAILABLE_RESERVATION: "هذا الحجز غير متوفر",
+        RESERVATION_MAKE: "تم الحجز بنجاح",
+        RESERVATION_COMPLETE: "الحجز انتهى بالفعل",
+        RESERVATION_CANCEL: "تم إلغاء الحجز بنجاح",
+        RESERVATION_CONFIRM: "تم تأكيد الحجز بنجاح",
+        RESERVATION_CANCEL_BEFORE: "تم إلغاء الحجز بالفعل من قبل",
+        RESERVATION_CONFIRM_BEFORE: "تم تأكيد الحجز بالفعل من قبل",
     }
 
 }
