@@ -88,6 +88,8 @@ export const allMessages =
         SUCCESS_DELETED:"Deleted successfully",
         DUPLICATE_NAME:"Duplicated name",
         NO_REVIEW_FOUND:"There's no review found",
+        //Auth - Signup
+        ACCOUNT_CREATED:"Account created successfully"
     },
     ar: {
         LOGOUT_SUCCESS:"تم تسجيل الخروج بنجاح",
@@ -178,6 +180,8 @@ export const allMessages =
         SUCCESS_DELETED: "حذف بنجاح",
         DUPLICATE_NAME:"اسم مكرر",
         NO_REVIEW_FOUND:"لم يتم العثور علي تقييم",
+        //Auth - Signup
+        ACCOUNT_CREATED:"الحساب اقيم بنجاح"
     }
 
 }

@@ -6,12 +6,14 @@ const patientSchema = new Schema(
     ...personSchema,
     history: [
       {
-        type: String,
+        doctorName: {
+          type: String,
+          required: true,
+        },
         date: {
           type: Date,
           required: true,
         },
-        required: false,
       },
     ],
   },
