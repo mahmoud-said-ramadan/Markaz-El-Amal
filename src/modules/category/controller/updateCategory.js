@@ -24,34 +24,47 @@ export const updateCategory = async (req, res, next) => {
     );
   }
   //Check name
-  if (req.body.nameEN || req.body.nameAR) {
-    //Check if old name != new name
-    if (
-      category.name.ar == req.body.nameAR &&
-      category.name.en == req.body.nameEN
-    ) {
-      //Check if other category have the same name
+  if (req.body.nameAR) {
+    if (category.name.ar.toString() !== req.body.nameAR.toString()) {
       if (
         await categoryModel.findOne({
-          $or: [{ "name.ar": req.body.nameAR }, { "name.en": req.body.nameEN }],
+          "name.ar": req.body.nameAR,
           createdBy: { $ne: req.user._id },
         })
       ) {
         return next(
           new ErrorClass(
-            allMessages[req.query.ln].DUPLICATE_NAME,
-            StatusCodes.CONFLICT
+            `${allMessages[req.query.ln].DUPLICATE_NAME_CATERGORY} ${
+              req.body.nameAR
+            }`,
+            StatusCodes.BAD_REQUEST
           )
         );
       }
-      category.name = {
-        en: req.body.nameEN,
-        ar: req.body.nameAR,
-      };
-      category.slug = {
-        en: slugify(req.body.nameEN, "-"),
-        ar: slugify(req.body.nameAR, "-"),
-      };
+      category.name.ar = req.body.nameAR;
+      category.slug.ar = slugify(req.body.nameAR, "-");
+    }
+  }
+  if (req.body.nameEN) {
+    console.log(category.name.en.toString() !== req.body.nameEN.toString());
+    if (category.name.en.toString() !== req.body.nameEN.toString()) {
+      if (
+        await categoryModel.findOne({
+          "name.en": req.body.nameEN,
+          createdBy: { $ne: req.user._id },
+        })
+      ) {
+        return next(
+          new ErrorClass(
+            `${allMessages[req.query.ln].DUPLICATE_NAME_CATERGORY} ${
+              req.body.nameEN
+            }`,
+            StatusCodes.BAD_REQUEST
+          )
+        );
+      }
+      category.name.en = req.body.nameEN;
+      category.slug.en = slugify(req.body.nameEN, "-");
     }
   }
   //file
@@ -67,10 +80,8 @@ export const updateCategory = async (req, res, next) => {
   }
   //Update category
   await category.save();
-  return res
-    .status(200)
-    .json({
-      message: allMessages[req.query.ln].SUCCESS_EDIT_CATEGORY,
-      category,
-    });
+  return res.status(200).json({
+    message: allMessages[req.query.ln].SUCCESS_EDIT_CATEGORY,
+    category,
+  });
 };

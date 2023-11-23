@@ -11,8 +11,8 @@ export const getCategory = asyncErrorHandler(async (req, res, next) => {
    * output: Get one category
    */
   const category = req.params.id
-    ? await categoryModel.findById(req.params.id)
-    : await categoryModel.find();
+    ? await categoryModel.findById(req.params.id).select('name slug image')
+    : await categoryModel.find().select('name slug image');
   if (!category) {
     return next(
       new ErrorClass(
