@@ -10,20 +10,22 @@ import { nanoid } from "nanoid";
  * authorized: Admin
  * Logic: check if name of category if found before then iupload image on cloudinary and create category
  * input: name of category , image
- * output: msg - Data of new category 
+ * output: msg - Data of new category
  */
 export const createCategory = async (req, res, next) => {
-  const { nameEN , nameAR } = req.body;
+  const { nameEN, nameAR } = req.body;
   //Must be a unique name
-  if (await categoryModel.findOne({ name: { en: nameEN, ar: nameAR } })) {
+  if (await categoryModel.findOne({
+    $or: [{ "name.ar": nameAR }, { "name.en": nameEN }],
+  })) {
     return next(
       new ErrorClass(
-        `${allMessages[req.query.ln].DUPLICATE_NAME}`,
+        `${allMessages[req.query.ln].DUPLICATE_NAME_CATERGORY}`,
         StatusCodes.CONFLICT
       )
     );
   }
-  const customId = nanoid(5)
+  const customId = nanoid(5);
   //Upload image on cloudinary
   const { secure_url, public_id } = await cloudinary.uploader.upload(
     req.file.path,
@@ -41,7 +43,7 @@ export const createCategory = async (req, res, next) => {
     },
     image: { secure_url, public_id },
     createdBy: req.user._id,
-    customId
+    customId,
   });
   if (!category) {
     return next(
@@ -51,7 +53,8 @@ export const createCategory = async (req, res, next) => {
       )
     );
   }
-  return res
-    .status(201)
-    .json({ message: `${allMessages[req.query.ln].SUCCESS_CREATE_CATEGORY}`, category });
+  return res.status(201).json({
+    message: `${allMessages[req.query.ln].SUCCESS_CREATE_CATEGORY}`,
+    category,
+  });
 };
