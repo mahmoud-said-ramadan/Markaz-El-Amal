@@ -5,7 +5,7 @@ import { allMessages } from "../../../utils/localizationHelper.js";
 import reservationModel from "../../../../DB/models/Reservation.model.js";
 /**
  * authorized: Patient
- * logic: searh reservations of doctor to confirm
+ * logic: Get all reservations for all doctors
  * input: 
  * output: msg ,reservations
  */
