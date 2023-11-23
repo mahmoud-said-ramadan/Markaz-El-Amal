@@ -23,8 +23,8 @@ const makeReservation = asyncErrorHandler(async (req, res, next) => {
       )
     );
   }
-  if (reservation !== "avaliable") {
-    if (reservation.patientId.toString() == req.user._id.toString()) {
+  if (reservation.status.toString() != "available") {;
+    if (reservation.patientId?.toString() == req.user._id.toString()) {
       return next(
         new ErrorClass(
           allMessages[req.query.ln].RESERVATION_BEFORE,
