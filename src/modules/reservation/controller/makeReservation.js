@@ -23,7 +23,15 @@ const makeReservation = asyncErrorHandler(async (req, res, next) => {
       )
     );
   }
-  if (reservation.status.toString() !== "available") {
+  if (reservation !== "avaliable") {
+    if (reservation.patientId.toString() == req.user._id.toString()) {
+      return next(
+        new ErrorClass(
+          allMessages[req.query.ln].RESERVATION_BEFORE,
+          StatusCodes.BAD_REQUEST
+        )
+      );
+    }
     return next(
       new ErrorClass(
         allMessages[req.query.ln].NOT_AVAILABLE_RESERVATION,
@@ -37,7 +45,7 @@ const makeReservation = asyncErrorHandler(async (req, res, next) => {
   if (req.body.paymentMethod.toString() == "card") {
     reservation.status = "pending";
     await reservation.save();
-    //status go to waiting 
+    //status go to waiting
     const stripe = new Stripe(process.env.STRIP_KEY);
     const session = await payment({
       stripe,
@@ -67,10 +75,8 @@ const makeReservation = asyncErrorHandler(async (req, res, next) => {
         },
       ],
     });
-    return res
-      .status(201)
-      .json({ message: "Done", url: session.url });
-  } 
+    return res.status(201).json({ message: "Done", url: session.url });
+  }
   // cash
   reservation.status = "waiting";
   await reservation.save();
