@@ -5,6 +5,7 @@ import makeReservation from "./controller/makeReservation.js";
 import confirmReservation from "./controller/confirmReservation.js";
 import reservationsAllToday from "./controller/reservationsAllToday.js";
 import reservationsOne from "./controller/reservationsOne.js";
+import deleteReservation from "./controller/deleteReservation.js"
 import {
   cancelReservationDoctor,
   cancelReservationPatient,
@@ -52,5 +53,11 @@ router.get(
   "/patient/:doctorId",
   auth(reservationEndpoint.patient),
   reservationsOne
+);
+// delete reservation 
+router.delete(
+  "/doctor/:reservationId",
+  auth(reservationEndpoint.doctor),
+  deleteReservation
 );
 export default router;
