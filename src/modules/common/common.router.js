@@ -8,41 +8,45 @@ import changeEmailController from "./controller/changeEmail.js";
 import logoutController from "./controller/logout.js";
 import updatePersonalInfoController from "./controller/updatePersonalInfo.js";
 import getUserController from "./controller/getUser.js";
-import { validateId, validation } from "../../middleware/validation.js";
+import { validation } from "../../middleware/validation.js";
 import * as validator from "./common.validation.js";
 const router = Router();
 
-// .route("/:id")
 router
   .route(["/", "/:id"])
-  // .get(auth(commonEndPoint.getUser), validation(validateId), getUserController)
+  .get(
+    validation(validator.get),
+    auth(commonEndPoint.getUser),
+    getUserController
+  )
   .put(
+    fileUpload(filesValidation.image).single("image"),
+    validation(validator.update),
     auth(commonEndPoint.update),
-    // fileUpload(filesValidation.image).single("image"),
     updatePersonalInfoController
   );
 router.patch(
   "/changePassword",
+  validation(validator.changePassword),
   auth(commonEndPoint.update),
-  // validation(validator.changePassword),
   changePasswordController
 );
 router.patch(
   "/changeEmail",
+  validation(validator.changeEmail),
   auth(commonEndPoint.update),
-  // validation(validator.changeEmail),
   changeEmailController
 );
 router.patch(
   "/confirmChangeEmail",
+  validation(validator.confirmChangeEmail),
   auth(commonEndPoint.update),
-  // validation(validator.confirmChangeEmail),
   confirmChangeEmailController
 );
 router.patch(
-  "/logout",
+  "/logout",  
+  validation(validator.logout),
   auth(commonEndPoint.update),
-  // validation(validator.logout),
   logoutController
 );
 

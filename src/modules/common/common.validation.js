@@ -1,37 +1,26 @@
 import joi from "joi";
 import { generalFields } from "../../middleware/validation.js";
-
-// export const get = {
-//   body: joi.object({}).required(),
-//   params: joi
-//     .object({
-//       id: generalFields.id,
-//     })
-//     .required(),
-//   query: joi
-//     .object({
-//       ln: generalFields.ln.required(),
-//     })
-//     .required(),
-// };
-
-export const updatePatient = {
+const updatePatient = {
   body: joi
     .object({
       name: joi.string(),
       phone: generalFields.phone,
     })
     .required(),
-  params: joi.object({}).required(),
+  params: joi
+    .object({
+      id: generalFields.id,
+    })
+    .required(),
   query: joi
     .object({
       ln: generalFields.ln.required(),
     })
     .required(),
-  file: generalFields.file.required(),
+  // file: generalFields.file.required(),
 };
 
-export const updateDoctor = {
+const updateDoctor = {
   body: joi
     .object({
       name: joi.string(),
@@ -40,13 +29,37 @@ export const updateDoctor = {
       consultationFee: joi.number().min(1),
     })
     .required(),
-  params: joi.object({}).required(),
+  params: joi
+    .object({
+      id: generalFields.id,
+    })
+    .required(),
   query: joi
     .object({
       ln: generalFields.ln.required(),
     })
     .required(),
-  file: joi.object({}).required(),
+  file: generalFields.file,
+};
+
+export const update = (req) => {
+  if (req.originalUrl.includes("/doctor")) {
+    return updateDoctor;
+  }
+  return updatePatient;
+};
+export const get = {
+  body: joi.object({}).required(),
+  params: joi
+    .object({
+      id: generalFields.id,
+    })
+    .required(),
+  query: joi
+    .object({
+      ln: generalFields.ln.required(),
+    })
+    .required(),
 };
 
 // export const deletePatient = {
