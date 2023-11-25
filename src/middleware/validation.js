@@ -62,6 +62,7 @@ export const validateId = {
 export const validation = (schema) => {
   return (req, res, next) => {
     const validationErr = [];
+    schema = typeof schema == "function" ? schema(req) : schema;
     dataMethods.forEach((key) => {
       if (schema[key]) {
         const validationResult = schema[key].validate(req[key], {
