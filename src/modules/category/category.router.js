@@ -41,4 +41,9 @@ router
     getCategory
   )
 
+  router.route(["/:role"])
+  .get(
+    auth(categoryEndPoint.get),
+    getCategory
+  )
 export default router;

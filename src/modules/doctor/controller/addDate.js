@@ -4,11 +4,26 @@ import { asyncErrorHandler } from "../../../utils/errorHandling.js";
 import { allMessages } from "../../../utils/localizationHelper.js";
 import reservationModel from "../../../../DB/models/Reservation.model.js";
 /**
- * Needed data => to, from, time (body)
+ * Needed data =>  "appointment": [{ from , to , time, id of category}] (body)
+ * Logic => Doctor add time of appointments and his category => if time <= ? ❎ : ✔️ Create reservations of doctor
  * Returned data => Message
  * Who authorized => doctor
  */
 const addDate = asyncErrorHandler(async (req, res, next) => {
+  //Should time not be the same day or smaller than
+  for (let i = 0; i < req.body.appointment.length; i++) {
+    const time = new Date(req.body.appointment[i].time);
+    if (
+      time.toISOString().slice(0, 10) <= new Date().toISOString().slice(0, 10)
+    ) {
+      return next(
+        new ErrorClass(
+          allMessages[req.query.ln].RESERVATION_TIMES_ERROR,
+          StatusCodes.BAD_REQUEST
+        )
+      );
+    }
+  }
   //Function get price of seasion
   function price(categoryId) {
     const category = req.user.categories.find((category) => {
@@ -20,18 +35,21 @@ const addDate = asyncErrorHandler(async (req, res, next) => {
   const duration = req.user.duration; // 30
   for (let i = 0; i < req.body.appointment.length; i++) {
     //check if this appointment made before
-    if (req.user.appointment.find(
-      (x) =>
-        x.time.toString() ==
-          new Date(req.body.appointment[i].time).toString() &&
-        x.from.toString() == req.body.appointment[i].from
-    )) {
+    if (
+      req.user.appointment.find(
+        (x) =>
+          x.time.toString() ==
+            new Date(req.body.appointment[i].time).toString() &&
+          x.from.toString() == req.body.appointment[i].from
+      )
+    ) {
       return next(
         new ErrorClass(
           allMessages[req.query.ln].DUPLICATE_APPOINTMENT,
           StatusCodes.BAD_REQUEST
         )
-      )}
+      );
+    }
     req.user.appointment.push(req.body.appointment[i]);
     //Create reservations of doctor
     const appointmentEnd = req.body.appointment[i].to; //12
@@ -50,7 +68,7 @@ const addDate = asyncErrorHandler(async (req, res, next) => {
         },
         categoryId: req.body.appointment[i].id,
         doctorId: req.user._id,
-        time: req.body.appointment[i].time
+        time: req.body.appointment[i].time,
       });
       counter = to;
       await reservation.save();
