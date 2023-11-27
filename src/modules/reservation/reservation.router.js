@@ -12,7 +12,7 @@ import {
 } from "./controller/cancelReservation.js";
 import waiting from "./controller/waiting.js";
 import accepted from "./controller/accepted.js";
-import deleted from "./controller/deleted.js";
+import rejected from "./controller/rejected.js";
 import completed from "./controller/completed.js";
 import webhook from "./controller/webhook.js";
 const router = Router();
@@ -70,11 +70,11 @@ router.get(
   auth(reservationEndpoint.doctor),
   accepted
 );
-// Doctor: Get Deleted patients
+// Doctor: Get rejected patients
 router.get(
-  "/doctor/deleted",
+  "/doctor/rejected",
   auth(reservationEndpoint.doctor),
-  deleted
+  rejected
 );
 // Doctor: Get Completed patients
 router.get(
