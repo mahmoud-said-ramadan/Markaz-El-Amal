@@ -6,8 +6,6 @@ async function payment({
   mode = "payment",
   customer_email,
   metadata = {},
-  cancel_url = process.env.CANCEL_URL,
-  success_url = process.env.SUCCESS_URL,
   discounts = [],
   line_items = [],
 } = {}) {
@@ -16,13 +14,14 @@ async function payment({
     mode,
     customer_email,
     metadata,
-    cancel_url,
-    success_url,
+    cancel_url: "https://www.google.com",
+    success_url: "https://www.google.com",
     discounts: [],
+    metadata,
     line_items,
   });
 
   return session;
 }
 
-export default payment
+export default payment;
