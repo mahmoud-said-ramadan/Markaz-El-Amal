@@ -1,7 +1,7 @@
 import { generateConfirmCode } from "../../../utils/code.js";
 import ErrorClass from "../../../utils/errorClass.js";
 import { asyncErrorHandler } from "../../../utils/errorHandling.js";
-// import { allMessages } from "../../../utils/localizationHelper.js";
+import { allMessages } from "../../../utils/localizationHelper.js";
 
 export const generateConfirmation = asyncErrorHandler(
   async (req, res, next) => {
@@ -12,7 +12,7 @@ export const generateConfirmation = asyncErrorHandler(
       );
     }
     return res.status(202).json({
-      message: "Code Sent!... Please Check Your inbox!",
+      message: `${allMessages[req.query.ln].CODE_SENT}`,
     });
   }
 );
