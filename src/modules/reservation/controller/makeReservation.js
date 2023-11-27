@@ -23,7 +23,7 @@ const makeReservation = asyncErrorHandler(async (req, res, next) => {
       )
     );
   }
-  if (reservation.status.toString() != "available") {;
+  if (reservation.status.toString() != "available") {
     if (reservation.patientId?.toString() == req.user._id.toString()) {
       return next(
         new ErrorClass(
@@ -43,18 +43,22 @@ const makeReservation = asyncErrorHandler(async (req, res, next) => {
   reservation.paymentMethod = req.body.paymentMethod;
   //check if method visa => pending or cash => waiting until doctor confirm
   if (req.body.paymentMethod.toString() == "card") {
-    reservation.status = "pending";
-    await reservation.save();
     //status go to waiting
     const stripe = new Stripe(process.env.STRIP_KEY);
+
     const session = await payment({
       stripe,
       payment_method_types: ["card"],
       mode: "payment",
       customer_email: req.user.email,
-      cancel_url: `${
-        process.env.CANCEL_URL
-      }?reservationId=${reservation._id.toString()}`,
+      metadata: {
+        reservationId: `${reservation._id}`,
+        doctorId: `${reservation.doctorId}`,
+        // consultationFees: `${reservation.consultationFees}`,
+        // appointmentFrom: String(reservation.appointmentSeasion.from),
+        // appointmentTo: String(reservation.appointmentSeasion.to),
+      },
+
       line_items: [
         {
           price_data: {
@@ -62,12 +66,6 @@ const makeReservation = asyncErrorHandler(async (req, res, next) => {
             product_data: {
               name: "Reservation",
               description: "Reservation",
-              metadata: {
-                reservationId: `${reservation._id}`,
-                consultationFees: `${reservation.consultationFees}`,
-                appointmentFrom: String(reservation.appointmentSeasion.from),
-                appointmentTo: String(reservation.appointmentSeasion.to),
-              },
             },
             unit_amount: reservation.consultationFees * 100,
           },
@@ -75,6 +73,8 @@ const makeReservation = asyncErrorHandler(async (req, res, next) => {
         },
       ],
     });
+    // reservation.status = "pending";
+    // await reservation.save();
     return res.status(201).json({ message: "Done", url: session.url });
   }
   // cash
