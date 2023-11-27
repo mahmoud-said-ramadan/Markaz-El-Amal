@@ -11,6 +11,7 @@ import {
   cancelReservationPatient,
 } from "./controller/cancelReservation.js";
 import reservationNeedConfirm from "./controller/getNeedConfirmReservation.js";
+import webhook from "./controller/webhook.js";
 const router = Router();
 // Make reservation (patient)
 router.patch(
@@ -60,4 +61,6 @@ router.delete(
   auth(reservationEndpoint.doctor),
   deleteReservation
 );
+
+router.post("/webhook", webhook);
 export default router;
