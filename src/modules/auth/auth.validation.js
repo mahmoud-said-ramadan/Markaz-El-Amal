@@ -45,9 +45,15 @@ const signupDoctor = {
       phone: generalFields.phone.required(),
       OTP: generalFields.code.required(),
       token: joi.string().required(),
-      bio:joi.string().min(3).required(),
-      duration:joi.number().integer().positive().min(10).required(),
-    
+      bio: joi.string().min(3).required(),
+      duration: joi.number().integer().positive().min(10).required(),
+      categories: joi
+        .array()
+        .items({
+          consultationFee: joi.number().positive().required(),
+          id: generalFields.id.required(),
+        })
+        .required(),
     })
     .required(),
   params: joi
