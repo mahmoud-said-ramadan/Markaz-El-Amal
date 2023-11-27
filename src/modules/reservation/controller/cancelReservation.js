@@ -3,6 +3,7 @@ import ErrorClass from "../../../utils/errorClass.js";
 import { asyncErrorHandler } from "../../../utils/errorHandling.js";
 import { allMessages } from "../../../utils/localizationHelper.js";
 import reservationModel from "../../../../DB/models/Reservation.model.js";
+import doctorModel from "../../../../DB/models/Doctor.model.js";
 /**
  * authorized: Doctor
  * logic: if status cancelled? ✔️ : ❎ Change status of reservation -> status == "cancelled" & delete patient from this reservation
@@ -11,21 +12,14 @@ import reservationModel from "../../../../DB/models/Reservation.model.js";
  */
 export const cancelReservationDoctor = asyncErrorHandler(
   async (req, res, next) => {
+    const { reservationId } = req.params;
     const reservation = await reservationModel.findOne({
-      _id: req.params.reservationId,
+      _id: reservationId,
     });
     if (!reservation) {
       return next(
         new ErrorClass(
           allMessages[req.query.ln].NOT_FOUND,
-          StatusCodes.BAD_REQUEST
-        )
-      );
-    }
-    if (reservation.status == "cancelled") {
-      return next(
-        new ErrorClass(
-          allMessages[req.query.ln].RESERVATION_CANCEL_BEFORE,
           StatusCodes.BAD_REQUEST
         )
       );
@@ -38,9 +32,24 @@ export const cancelReservationDoctor = asyncErrorHandler(
         )
       );
     }
-    reservation.status = "cancelled";
-    reservation.patientId = null;
     await reservation.save();
+    await reservationModel.updateOne(
+      { _id: req.params.reservationId },
+      {
+        $unset: { paymentMethod: 1 },
+        status: "available",
+        patientId: null,
+      }
+    );
+    // push to rejected and pull from confirm
+    await doctorModel.findOneAndUpdate(
+      { _id: reservation.doctorId },
+      {
+        $push: { rejected: { reservationId, patientId: req.user._id } },
+        $pull: { confirm: reservationId },
+      },
+      { new: true }
+    );
     return res.status(StatusCodes.ACCEPTED).json({
       message: allMessages[req.query.ln].RESERVATION_CANCEL,
       reservation,
@@ -97,18 +106,16 @@ export const cancelReservationPatient = asyncErrorHandler(
     }
     if (reservation.status.toString() != "confirmed") {
       //Can change status of reservation -> status == "available"
-      reservation.status = "available";
-      reservation.patientId = null;
       await reservationModel.updateOne(
         { _id: req.params.reservationId },
-        { $unset: { paymentMethod: 1 } }
+        { $unset: { paymentMethod: 1 }, status: "available", patientId: null }
       );
       await reservation.save();
       return res.status(StatusCodes.ACCEPTED).json({
         message: allMessages[req.query.ln].RESERVATION_CANCEL,
       });
     }
-    if (reservation.status == "cancelled") {
+    if (reservation.status == "rejected") {
       return next(
         new ErrorClass(
           allMessages[req.query.ln].RESERVATION_CANCEL_BEFORE,
@@ -149,11 +156,9 @@ export const cancelReservationPatient = asyncErrorHandler(
       }
     }
     // if befor 30 min from session -> patient can cancel
-    reservation.status = "available";
-    reservation.patientId = null;
     await reservationModel.updateOne(
       { _id: req.params.reservationId },
-      { $unset: { paymentMethod: 1 } }
+      { $unset: { paymentMethod: 1 }, status: "available", patientId: null }
     );
     await reservation.save();
     return res.status(StatusCodes.ACCEPTED).json({
