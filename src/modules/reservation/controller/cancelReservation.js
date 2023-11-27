@@ -5,45 +5,159 @@ import { allMessages } from "../../../utils/localizationHelper.js";
 import reservationModel from "../../../../DB/models/Reservation.model.js";
 /**
  * authorized: Doctor
- * logic: if status cancelled? ❎ : ✔️ Change status of reservation -> status == "booked"
+ * logic: if status cancelled? ✔️ : ❎ Change status of reservation -> status == "cancelled" & delete patient from this reservation
  * input: reservationId
  * output: msg
  */
-const cancelReservation = asyncErrorHandler(async (req, res, next) => {
-  console.log(req.params.reservationId);
-  const reservation = await reservationModel.findOne({
-    _id: req.params.reservationId,
-  });
-  console.log({reservation});
-  if (!reservation) {
-    return next(
-      new ErrorClass(
-        allMessages[req.query.ln].NOT_FOUND,
-        StatusCodes.BAD_REQUEST
-      )
-    );
+export const cancelReservationDoctor = asyncErrorHandler(
+  async (req, res, next) => {
+    const reservation = await reservationModel.findOne({
+      _id: req.params.reservationId,
+    });
+    if (!reservation) {
+      return next(
+        new ErrorClass(
+          allMessages[req.query.ln].NOT_FOUND,
+          StatusCodes.BAD_REQUEST
+        )
+      );
+    }
+    if (reservation.status == "cancelled") {
+      return next(
+        new ErrorClass(
+          allMessages[req.query.ln].RESERVATION_CANCEL_BEFORE,
+          StatusCodes.BAD_REQUEST
+        )
+      );
+    }
+    if (reservation.status == "Completed") {
+      return next(
+        new ErrorClass(
+          allMessages[req.query.ln].RESERVATION_COMPLETE,
+          StatusCodes.BAD_REQUEST
+        )
+      );
+    }
+    reservation.status = "cancelled";
+    reservation.patientId = null;
+    await reservation.save();
+    return res.status(StatusCodes.ACCEPTED).json({
+      message: allMessages[req.query.ln].RESERVATION_CANCEL,
+      reservation,
+    });
   }
-  if (reservation.status == "cancelled") {
-    return next(
-      new ErrorClass(
-        allMessages[req.query.ln].RESERVATION_CANCEL_BEFORE, 
-        StatusCodes.BAD_REQUEST
-      )
+);
+/**
+ * authorized: Patient
+ * logic: if status confirmed from doctor? ❎ Can change status of reservation -> status == "available"
+ *                                       : ✔️ Change status of reservation if time < time session -> status == "available"
+ * input: reservationId
+ * output: msg
+ */
+export const cancelReservationPatient = asyncErrorHandler(
+  async (req, res, next) => {
+    const reservation = await reservationModel.findOne({
+      _id: req.params.reservationId,
+    });
+    if (!reservation) {
+      return next(
+        new ErrorClass(
+          allMessages[req.query.ln].NOT_FOUND,
+          StatusCodes.BAD_REQUEST
+        )
+      );
+    }
+    //1 ==> 23 | 2 ==> 24
+    // Session from -> edit time
+    let from = Number(reservation.appointmentSeasion.from) - 2;
+    let sessionFrom;
+    from == -1
+      ? (sessionFrom = 23)
+      : from == -2
+      ? (sessionFrom = 24)
+      : from == 0
+      ? (sessionFrom = 0)
+      : (sessionFrom = from);
+    // Session from get hours
+    const hours = Math.floor(sessionFrom);
+    // Session from get min
+    const min = (sessionFrom - Math.floor(sessionFrom)) * 60;
+    // Session time with from Session appointment
+    let reservationDate = new Date(reservation.time);
+    reservationDate.setHours(reservationDate.getHours() + hours);
+    reservationDate.setMinutes(min);
+    // check time now > Session appointment
+    if (new Date() > reservationDate) {
+      return next(
+        new ErrorClass(
+          allMessages[req.query.ln].RESERVATION_CANCEL_ERROR,
+          StatusCodes.BAD_REQUEST
+        )
+      );
+    }
+    if (reservation.status.toString() != "confirmed") {
+      //Can change status of reservation -> status == "available"
+      reservation.status = "available";
+      reservation.patientId = null;
+      await reservationModel.updateOne(
+        { _id: req.params.reservationId },
+        { $unset: { paymentMethod: 1 } }
+      );
+      await reservation.save();
+      return res.status(StatusCodes.ACCEPTED).json({
+        message: allMessages[req.query.ln].RESERVATION_CANCEL,
+      });
+    }
+    if (reservation.status == "cancelled") {
+      return next(
+        new ErrorClass(
+          allMessages[req.query.ln].RESERVATION_CANCEL_BEFORE,
+          StatusCodes.BAD_REQUEST
+        )
+      );
+    }
+    if (reservation.status == "Completed") {
+      return next(
+        new ErrorClass(
+          allMessages[req.query.ln].RESERVATION_COMPLETE,
+          StatusCodes.BAD_REQUEST
+        )
+      );
+    }
+    /**
+     * if the session is today and the patient wants to cancel:
+     * can cancel anytime before the session but 30 minutes before the session starts
+     */
+    //  30 min
+    let before = new Date(reservationDate.toISOString());
+    before = new Date(before.setMinutes(before.getMinutes() - 30));
+    //Same day of reservation or day before in one case (Before reservation day (one issue can face))
+    if (
+      new Date().toISOString().slice(0, 10) ==
+        reservationDate.toISOString().slice(0, 10) ||
+      reservationDate.getUTCDate() - new Date().getUTCDate() == 1
+    ) {
+      //check cancellation before 30 min ..
+      if (before > new Date()) {
+        // cannot cancel
+        return next(
+          new ErrorClass(
+            allMessages[req.query.ln].RESERVATION_CANCEL_UNAUTHORIZED,
+            StatusCodes.BAD_REQUEST
+          )
+        );
+      }
+    }
+    // if befor 30 min from session -> patient can cancel
+    reservation.status = "available";
+    reservation.patientId = null;
+    await reservationModel.updateOne(
+      { _id: req.params.reservationId },
+      { $unset: { paymentMethod: 1 } }
     );
+    await reservation.save();
+    return res.status(StatusCodes.ACCEPTED).json({
+      message: allMessages[req.query.ln].RESERVATION_CANCEL,
+    });
   }
-  if (reservation.status == "Completed") {
-    return next(
-      new ErrorClass(
-        allMessages[req.query.ln].RESERVATION_COMPLETE, 
-        StatusCodes.BAD_REQUEST
-      )
-    );
-  }
-  reservation.status = "cancelled";
-  reservation.patientId = null
-  await reservation.save();
-  return res
-    .status(StatusCodes.ACCEPTED)
-    .json({ message: allMessages[req.query.ln].RESERVATION_CANCEL, reservation });
-});
-export default cancelReservation;
+);
