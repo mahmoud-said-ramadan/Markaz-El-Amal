@@ -23,6 +23,7 @@ const reservationSchema = new Schema(
         type: Number,
         required: true,
       },
+      duration: { type: Number, required: true}
     },
     paymentMethod: {
         type: String,
