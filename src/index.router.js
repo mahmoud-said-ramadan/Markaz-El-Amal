@@ -12,8 +12,13 @@ import reservationRouter from "./modules/reservation/reservation.router.js";
 
 const initApp = (app, express) => {
   //convert Buffer Data
-  app.use(express.json({}));
-
+  app.use((req, res, next) => {
+    if (req.originalUrl == "/reservation/webhook") {
+      express.raw({ type: "application/json" })(req, res, next);
+    } else {
+      express.json()(req, res, next);
+    }
+  });
   //*Setup API Routing
   app.use("/patient", patientRouter);
   app.use("/Doctor", doctorRouter);
