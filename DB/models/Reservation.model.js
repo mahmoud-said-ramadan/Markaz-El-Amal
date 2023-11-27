@@ -7,7 +7,7 @@ const reservationSchema = new Schema(
     categoryId: { type: Types.ObjectId, ref: "Category", required: true },
     status: {
       type: String,
-      enum: ["available", "waiting", "pending", "cancelled", "confirmed", "booked", "Completed"],
+      enum: ["available", "waiting", "pending", "rejected", "confirmed", "Completed"],
       default: "available",
     },
     consultationFees: {

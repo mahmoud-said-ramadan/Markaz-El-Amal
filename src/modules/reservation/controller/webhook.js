@@ -24,7 +24,7 @@ const webhook = asyncErrorHandler(async (req, res, next) => {
     await doctorModel.updateOne(
       { _id: event.data.object.metadata.doctorId },
       {
-        $push: { confirmReservation: { _id } },
+        $push: { confirm: { _id } },
       }
     );
   } else {
