@@ -9,6 +9,7 @@ import doctorRouter from "./modules/doctor/doctor.router.js";
 import categoryRouter from "./modules/category/category.router.js";
 import reviewRouter from "./modules/review/review.router.js";
 import reservationRouter from "./modules/reservation/reservation.router.js";
+import chatRouter from "./modules/chat/chat.router.js";
 
 const initApp = (app, express) => {
   //convert Buffer Data
@@ -23,8 +24,9 @@ const initApp = (app, express) => {
   app.use("/category", categoryRouter);
   app.use("/review", reviewRouter);
   app.use("/reservation", reservationRouter);
+  app.use("/chat", chatRouter);
   app.all("*", (req, res, next) => {
-    return next(new ErrorClass(allMessages.en.IN_VALID_URL));
+    return next(new ErrorClass(allMessages.en.IN_VALID_URL + '0000000000', ));
   });
 
   app.use(errorHandel);
