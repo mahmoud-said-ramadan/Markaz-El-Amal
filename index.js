@@ -7,7 +7,9 @@ dotenv.config({ path: path.join(__dirname, './config/.env') })
 import express from 'express'
 import initApp from './src/index.router.js'
 import { initIo } from './src/utils/server.js'
+import http from 'http'
 const app = express()
+const server = http.createServer(app)
 // setup port and the baseUrl
 const port = process.env.PORT || 5000
 initApp(app ,express)
