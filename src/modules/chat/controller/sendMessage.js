@@ -44,6 +44,7 @@ export const sendMessage = asyncErrorHandler(async (req, res, next) => {
         userTwo: id,
         messages: [newMessage],
       });
+      getIo().to(isToExist.socketId).emit('recieveMessage', { chatId: newChat._id, message: newMessage, sender: req.user });
       return res.status(StatusCodes.CREATED).json({
         message: allMessages[req.query.ln].SUCCESS,
         chatId: newChat._id,
@@ -70,7 +71,7 @@ export const sendMessage = asyncErrorHandler(async (req, res, next) => {
     ];
   
     const populatedChat = await chatExist.populate(populateOptions);
-  
+    getIo().to(isToExist.socketId).emit('recieveMessage', { chatId: chatExist._id, message: newMessage, sender: req.user });
     return res.status(StatusCodes.CREATED).json({
       message: allMessages[req.query.ln].SUCCESS,
       chatId: populatedChat._id,
