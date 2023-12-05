@@ -10,11 +10,9 @@ import {
   cancelReservationDoctor,
   cancelReservationPatient,
 } from "./controller/cancelReservation.js";
-import waiting from "./controller/waiting.js";
-import accepted from "./controller/accepted.js";
-import rejected from "./controller/rejected.js";
-import completed from "./controller/completed.js";
+import getStatusController from "./controller/common.js";
 import webhook from "./controller/webhook.js";
+import accepted from "./controller/accepted.js";
 const router = Router();
 // Patient: Make reservation 
 router.patch(
@@ -58,29 +56,29 @@ router.delete(
   auth(reservationEndpoint.doctor),
   deleteReservation
 );
-// Doctor: Get Waiting Request patients
-router.get(
-  "/doctor",
-  auth(reservationEndpoint.doctor),
-  waiting
-);
 // Doctor: Get Accapted patients
 router.get(
   "/doctor/accepted",
   auth(reservationEndpoint.doctor),
-  accepted
+  getStatusController
 );
 // Doctor: Get rejected patients
 router.get(
   "/doctor/rejected",
   auth(reservationEndpoint.doctor),
-  rejected
+  getStatusController
 );
-// Doctor: Get Completed patients
+// Doctor: Get Waiting Request patients
 router.get(
-  "/doctor/completed",
+  "/doctor/waiting",
   auth(reservationEndpoint.doctor),
-  completed
+  getStatusController
+);
+// Doctor: Get confirm patients
+router.get(
+  "/doctor/confirm",
+  auth(reservationEndpoint.doctor),
+  getStatusController
 );
 router.post("/webhook", webhook);
 export default router;
