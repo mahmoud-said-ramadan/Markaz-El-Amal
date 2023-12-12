@@ -32,7 +32,17 @@ export const cancelReservationDoctor = asyncErrorHandler(
         )
       );
     }
-    await reservation.save();
+    // push to rejected and pull from confirm
+    await doctorModel.findOneAndUpdate(
+      { _id: reservation.doctorId },
+      {
+        $push: {
+          rejected: { reservationId, patientId: reservation.patientId },
+        },
+        $pull: { confirm: reservationId },
+      },
+      { new: true }
+    );
     await reservationModel.updateOne(
       { _id: req.params.reservationId },
       {
@@ -40,15 +50,6 @@ export const cancelReservationDoctor = asyncErrorHandler(
         status: "available",
         patientId: null,
       }
-    );
-    // push to rejected and pull from confirm
-    await doctorModel.findOneAndUpdate(
-      { _id: reservation.doctorId },
-      {
-        $push: { rejected: { reservationId, patientId: req.user._id } },
-        $pull: { confirm: reservationId },
-      },
-      { new: true }
     );
     return res.status(StatusCodes.ACCEPTED).json({
       message: allMessages[req.query.ln].RESERVATION_CANCEL,
@@ -111,6 +112,14 @@ export const cancelReservationPatient = asyncErrorHandler(
         { $unset: { paymentMethod: 1 }, status: "available", patientId: null }
       );
       await reservation.save();
+      //Delete from array confirm in doctor model
+      await doctorModel.findOneAndUpdate(
+        { _id: reservation.doctorId },
+        {
+          $pull: { confirm: req.params.reservationId },
+        },
+        { new: true }
+      );
       return res.status(StatusCodes.ACCEPTED).json({
         message: allMessages[req.query.ln].RESERVATION_CANCEL,
       });
@@ -161,6 +170,14 @@ export const cancelReservationPatient = asyncErrorHandler(
       { $unset: { paymentMethod: 1 }, status: "available", patientId: null }
     );
     await reservation.save();
+    //Delete from array confirm in doctor model
+    await doctorModel.findOneAndUpdate(
+      { _id: reservation.doctorId },
+      {
+        $pull: { confirm: req.params.reservationId },
+      },
+      { new: true }
+    );
     return res.status(StatusCodes.ACCEPTED).json({
       message: allMessages[req.query.ln].RESERVATION_CANCEL,
     });
