@@ -12,7 +12,6 @@ import {
 } from "./controller/cancelReservation.js";
 import getStatusController from "./controller/common.js";
 import webhook from "./controller/webhook.js";
-import accepted from "./controller/accepted.js";
 import rejected from "./controller/rejected.js";
 import booked from "./controller/booked.js";
 const router = Router();
