@@ -7,31 +7,37 @@ import { getCategory } from "./controller/getCategory.js";
 import { updateCategory } from "./controller/updateCategory.js"
 import { auth } from "../../middleware/auth.js";
 import categoryEndPoint from "./category.endpoint.js";
-
+import {  validateId, validation } from "../../middleware/validation.js";
+import * as validator from "./category.validation.js"
 router
   .route(["/admin"])
   .post(
     auth(categoryEndPoint.common),
     fileUpload(filesValidation.image).single("image"),
+    validation(validator.createCategory),
     createCategory
   )
-
-  router
-  .route(["/admin/:id"])
-  .patch(
-    auth(categoryEndPoint.common),
-    fileUpload(filesValidation.image).single("image"),
-    updateCategory
-  )
-  .delete(
-    auth(categoryEndPoint.common),
-    deleteCategory
-  )
-
-  router
-  .route(["/:role/:id"])
   .get(
     auth(categoryEndPoint.get),
+    getCategory
+    )
+    
+    router
+    .route(["/admin/:id"])
+    .patch(
+      auth(categoryEndPoint.common),
+    fileUpload(filesValidation.image).single("image"),
+    validation(validator.updateCategory),
+    updateCategory
+    )
+    .delete(
+    auth(categoryEndPoint.common),
+    validation(validateId),
+    deleteCategory
+    )
+    .get(
+      auth(categoryEndPoint.get),
+      validation(validateId),
     getCategory
   )
 
