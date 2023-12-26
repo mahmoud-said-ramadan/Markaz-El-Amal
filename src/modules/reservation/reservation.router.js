@@ -5,18 +5,17 @@ import makeReservation from "./controller/makeReservation.js";
 import confirmReservation from "./controller/confirmReservation.js";
 import reservationsAllToday from "./controller/reservationsAllToday.js";
 import reservationsOne from "./controller/reservationsOne.js";
-import deleteReservation from "./controller/deleteReservation.js"
+import deleteReservation from "./controller/deleteReservation.js";
 import {
   cancelReservationDoctor,
   cancelReservationPatient,
 } from "./controller/cancelReservation.js";
-import waiting from "./controller/waiting.js";
-import accepted from "./controller/accepted.js";
-import rejected from "./controller/rejected.js";
-import completed from "./controller/completed.js";
+import getStatusController from "./controller/common.js";
 import webhook from "./controller/webhook.js";
+import rejected from "./controller/rejected.js";
+import booked from "./controller/booked.js";
 const router = Router();
-// Patient: Make reservation 
+// Patient: Make reservation
 router.patch(
   "/patient/:reservationId",
   auth(reservationEndpoint.patient),
@@ -28,7 +27,7 @@ router.patch(
   auth(reservationEndpoint.doctor),
   cancelReservationDoctor
 );
-// Patient: cancel reservation 
+// Patient: cancel reservation
 router.patch(
   "/patient/:reservationId/cancel",
   auth(reservationEndpoint.patient),
@@ -52,35 +51,33 @@ router.get(
   auth(reservationEndpoint.patient),
   reservationsOne
 );
-// Doctor: Delete reservation 
+// Doctor: Delete reservation
 router.delete(
   "/doctor/:reservationId",
   auth(reservationEndpoint.doctor),
   deleteReservation
 );
-// Doctor: Get Waiting Request patients
-router.get(
-  "/doctor",
-  auth(reservationEndpoint.doctor),
-  waiting
-);
 // Doctor: Get Accapted patients
 router.get(
   "/doctor/accepted",
   auth(reservationEndpoint.doctor),
-  accepted
+  getStatusController
 );
 // Doctor: Get rejected patients
+router.get("/doctor/rejected", auth(reservationEndpoint.doctor), rejected);
+// Doctor: Get Waiting Request patients
 router.get(
-  "/doctor/rejected",
+  "/doctor/waiting",
   auth(reservationEndpoint.doctor),
-  rejected
+  getStatusController
 );
-// Doctor: Get Completed patients
+// Doctor: Get confirm patients
 router.get(
-  "/doctor/completed",
+  "/doctor/confirm",
   auth(reservationEndpoint.doctor),
-  completed
+  getStatusController
 );
+// Doctor: Get confirm patients of selected date in req.body
+router.get("/doctor/booked", auth(reservationEndpoint.doctor), booked);
 router.post("/webhook", webhook);
 export default router;

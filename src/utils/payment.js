@@ -10,6 +10,7 @@ async function payment({
   line_items = [],
 } = {}) {
   const session = await stripe.checkout.sessions.create({
+    expires_at: 5,
     payment_method_types,
     mode,
     customer_email,
@@ -23,5 +24,4 @@ async function payment({
 
   return session;
 }
-
 export default payment;

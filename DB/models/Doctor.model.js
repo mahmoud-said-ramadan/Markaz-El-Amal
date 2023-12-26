@@ -36,16 +36,20 @@ const doctorSchema = new Schema(
         _id: false,
       },
     ],
-    confirm: [{ type: Types.ObjectId, ref: "Reservation", required: true }],
-    accepted: [{ type: Types.ObjectId, ref: "Reservation", required: true }],
+    confirm: [{ type: Types.ObjectId, ref: "Reservation", required: false }],
+    accepted: [{ type: Types.ObjectId, ref: "Reservation", required: false }],
     rejected: [
       {
-        reservationId: { type: Types.ObjectId, ref: "Reservation", required: false},
+        reservationId: {
+          type: Types.ObjectId,
+          ref: "Reservation",
+          required: false,
+        },
         patientId: { type: Types.ObjectId, ref: "Patient", required: false },
         _id: false,
       },
     ],
-    completed: [{ type: Types.ObjectId, ref: "Reservation", required: true }],
+    // completed: [{ type: Types.ObjectId, ref: "Reservation", required: false }],
   },
   {
     timestamps: true,
