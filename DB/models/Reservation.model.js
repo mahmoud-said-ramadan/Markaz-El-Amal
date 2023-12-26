@@ -7,7 +7,7 @@ const reservationSchema = new Schema(
     categoryId: { type: Types.ObjectId, ref: "Category", required: true },
     status: {
       type: String,
-      enum: ["available", "waiting", "pending", "rejected", "confirmed", "Completed"],
+      enum: ["available", "waiting", "pending", "cancelled", "confirmed", "booked", "Completed"],
       default: "available",
     },
     consultationFees: {
@@ -26,9 +26,10 @@ const reservationSchema = new Schema(
       duration: { type: Number, required: true}
     },
     paymentMethod: {
-        type: String,
-        enum: ['card', 'cash'],
+      type: String,
+      enum: ["card", "cash"],
     },
+    paymentId: String,
     time: { type: Date, required: true }, // yyyy-MM-dd
   },
   {

@@ -57,27 +57,6 @@ router.delete(
   auth(reservationEndpoint.doctor),
   deleteReservation
 );
-// Doctor: Get Accapted patients
-router.get(
-  "/doctor/accepted",
-  auth(reservationEndpoint.doctor),
-  getStatusController
-);
-// Doctor: Get rejected patients
-router.get("/doctor/rejected", auth(reservationEndpoint.doctor), rejected);
-// Doctor: Get Waiting Request patients
-router.get(
-  "/doctor/waiting",
-  auth(reservationEndpoint.doctor),
-  getStatusController
-);
-// Doctor: Get confirm patients
-router.get(
-  "/doctor/confirm",
-  auth(reservationEndpoint.doctor),
-  getStatusController
-);
-// Doctor: Get confirm patients of selected date in req.body
-router.get("/doctor/booked", auth(reservationEndpoint.doctor), booked);
+
 router.post("/webhook", webhook);
 export default router;
