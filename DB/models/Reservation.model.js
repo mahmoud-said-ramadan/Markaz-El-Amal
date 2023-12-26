@@ -23,11 +23,13 @@ const reservationSchema = new Schema(
         type: Number,
         required: true,
       },
+      duration: { type: Number, required: true}
     },
     paymentMethod: {
-        type: String,
-        enum: ['card', 'cash'],
+      type: String,
+      enum: ["card", "cash"],
     },
+    paymentId: String,
     time: { type: Date, required: true }, // yyyy-MM-dd
   },
   {

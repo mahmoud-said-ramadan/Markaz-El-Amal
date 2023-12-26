@@ -20,14 +20,10 @@ const doctorSchema = new Schema(
           required: true,
         },
         time: { type: Date, required: true }, // yyyy-MM-dd
-        id: { type: Types.ObjectId, ref: "Category", required: true },
+        categoryId: { type: Types.ObjectId, ref: "Category", required: true },
+        duration: { type: Number, required: true },
       },
     ],
-    duration: {
-      // 30 m
-      type: Number,
-      required: true,
-    },
     avgRate: { type: Number, default: 0 },
     rateNo: { type: Number, default: 0 },
     categories: [
@@ -40,9 +36,20 @@ const doctorSchema = new Schema(
         _id: false,
       },
     ],
-    confirmReservation: [
-      { type: Types.ObjectId, ref: "Reservation", required: true },
+    confirm: [{ type: Types.ObjectId, ref: "Reservation", required: false }],
+    accepted: [{ type: Types.ObjectId, ref: "Reservation", required: false }],
+    rejected: [
+      {
+        reservationId: {
+          type: Types.ObjectId,
+          ref: "Reservation",
+          required: false,
+        },
+        patientId: { type: Types.ObjectId, ref: "Patient", required: false },
+        _id: false,
+      },
     ],
+    // completed: [{ type: Types.ObjectId, ref: "Reservation", required: false }],
   },
   {
     timestamps: true,

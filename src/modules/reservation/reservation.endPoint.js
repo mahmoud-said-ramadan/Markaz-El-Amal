@@ -1,9 +1,8 @@
 import { Roles } from "../../middleware/auth.js";
 
 const reservationEndpoint = {
-    makeReservation: [Roles.Patient],
-    confirmReservation: [Roles.doctor],
-    cancelReservation: [Roles.doctor],
-    reservationNeedConfirm: [Roles.doctor]
+    patient: [Roles.Patient],
+    doctor: [Roles.doctor],
+    admin: [Roles.admin]
 };
 export default reservationEndpoint;

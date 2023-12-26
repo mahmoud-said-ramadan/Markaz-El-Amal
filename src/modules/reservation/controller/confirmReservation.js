@@ -4,6 +4,7 @@ import { asyncErrorHandler } from "../../../utils/errorHandling.js";
 import { allMessages } from "../../../utils/localizationHelper.js";
 import reservationModel from "../../../../DB/models/Reservation.model.js";
 import patientModel from "../../../../DB/models/Patient.model.js";
+import doctorModel from "../../../../DB/models/Doctor.model.js";
 /**
  * authorized: Doctor
  * logic: if confirmed? ✔️ : ❎ Change status of reservation -> status == "confirmed" & push this reservation to history of patient
@@ -11,8 +12,9 @@ import patientModel from "../../../../DB/models/Patient.model.js";
  * output: msg , reservation
  */
 const confirmReservation = asyncErrorHandler(async (req, res, next) => {
+  const {reservationId} = req.params 
   const reservation = await reservationModel.findOne({
-    _id: req.params.reservationId,
+    _id: reservationId,
   });
   if (!reservation) {
     return next(
@@ -40,7 +42,16 @@ const confirmReservation = asyncErrorHandler(async (req, res, next) => {
   }
   reservation.status = "confirmed";
   await reservation.save()
-  // push this reservation to history of patient
+    // push to accepted and pull from confirm
+  await doctorModel.findOneAndUpdate(
+    { _id: reservation.doctorId },
+    {
+      $push: { accepted: { _id: reservationId } },
+      $pull: { confirm: reservationId  },
+    },
+    { new: true }
+  );
+  // push to history of patient
   await patientModel.findOneAndUpdate(
     { _id: reservation.patientId },
     {

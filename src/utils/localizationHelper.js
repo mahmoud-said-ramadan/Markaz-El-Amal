@@ -107,6 +107,13 @@ export const allMessages = {
     RESERVATION_CONFIRM: "Reservation confirmed successfully",
     RESERVATION_CANCEL_BEFORE: "Reservation already canceled before",
     RESERVATION_CONFIRM_BEFORE: "Reservation already confirmed before",
+    RESERVATION_TIMES_ERROR: "Cannot add an appointment on the same day or before",
+    RESERVATION_CANCEL_ERROR: "Cannot cancel after the session start",
+    RESERVATION_CANCEL_UNAUTHORIZED: "You are not allowed to cancel the session now",
+    RESERVATION_BEFORE: "Look like you are reservation before",
+    RESERVATION_DELETE: "Reservation deleted successfully",
+    RESERVATION_DELETE_ERROR: "You cannot delete the reservation, it must be available",
+    RESERVATION_BAD_REQ: "Check the time you entered",
     //Send code
     CODE_SENT: "Code Sent, please Check Your inbox!",
     INVALID_CODE_EXPIRE:
@@ -117,6 +124,8 @@ export const allMessages = {
     SUCCESS_EDIT_CATEGORY: "Category updated successfully",
     FAIL_CREATE_CATEGORY: "Category creation failed",
     FAIL_EDIT_CATEGORY: "Category update failed",
+    REFUND_SUCCESS: "The refund request accepted successfuly,Check your email",
+    REFUND_FAILED: "The refund request has been denied",
   },
   ar: {
     LOGOUT_SUCCESS: "تم تسجيل الخروج بنجاح",
@@ -226,6 +235,13 @@ export const allMessages = {
     RESERVATION_CONFIRM: "تم تأكيد الحجز بنجاح",
     RESERVATION_CANCEL_BEFORE: "تم إلغاء الحجز بالفعل من قبل",
     RESERVATION_CONFIRM_BEFORE: "تم تأكيد الحجز بالفعل من قبل",
+    RESERVATION_TIMES_ERROR: "لا يمكن إضافة موعد في نفس اليوم أو قبله",
+    RESERVATION_CANCEL_ERROR: "لا يمكن الإلغاء بعد بدء الجلسة",
+    RESERVATION_CANCEL_UNAUTHORIZED: "غير مسموح لك إلغاء الجلسة الآن",
+    RESERVATION_BEFORE: "يبدو أنك قمت بالحجز من قبل",
+    RESERVATION_DELETE: "تم حذف الحجز بنجاح",
+    RESERVATION_DELETE_ERROR: "لا يمكنك حذف الحجز يجب ان يكون متاح",
+    RESERVATION_BAD_REQ: "افحص الوقت الذي ادخلتة",
     //Send code
     CODE_SENT: "تم إرسال الرمز، يرجى التحقق من صندوق الوارد الخاص بك!",
     INVALID_CODE_EXPIRE:
@@ -236,5 +252,7 @@ export const allMessages = {
     SUCCESS_EDIT_CATEGORY: "تم تحديث الفئة بنجاح",
     FAIL_CREATE_CATEGORY: "فشل إنشاء الفئة",
     FAIL_EDIT_CATEGORY: "فشل تحديث الفئة ",
+    REFUND_SUCCESS: "تم قبول طلب استرداد الأموال بنجاح تفقد ايميلك",
+    REFUND_FAILED: "فشل طلب استرداد الأموال",
   },
 };
