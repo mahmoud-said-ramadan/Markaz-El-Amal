@@ -45,7 +45,6 @@ const makeReservation = asyncErrorHandler(async (req, res, next) => {
   if (req.body.paymentMethod.toString() == "card") {
     //status go to waiting
     const stripe = new Stripe(process.env.STRIP_KEY);
-
     const session = await payment({
       stripe,
       payment_method_types: ["card"],
@@ -58,7 +57,6 @@ const makeReservation = asyncErrorHandler(async (req, res, next) => {
         // appointmentFrom: String(reservation.appointmentSeasion.from),
         // appointmentTo: String(reservation.appointmentSeasion.to),
       },
-
       line_items: [
         {
           price_data: {
@@ -73,22 +71,23 @@ const makeReservation = asyncErrorHandler(async (req, res, next) => {
         },
       ],
     });
-    // reservation.status = "pending";
-    // await reservation.save();
-    return res.status(201).json({ message: "Done", url: session.url });
+    reservation.status = "pending";
+    await reservation.save();
+    return res
+      .status(201)
+      .json({ message: "Done", url: session.url, reservation });
   }
   // cash
   reservation.status = "waiting";
   await reservation.save();
-  // push this reservation to doctor of confirm reservation
-  const x = await doctorModel.findOneAndUpdate(
+  // push to confirm
+  await doctorModel.findOneAndUpdate(
     { _id: reservation.doctorId },
     {
-      $push: { confirmReservation: { _id } },
+      $push: { confirm: { _id } },
     },
     { new: true }
   );
-  console.log({ x });
   return res
     .status(StatusCodes.OK)
     .json({ message: allMessages[req.query.ln].RESERVATION_MAKE, reservation });
