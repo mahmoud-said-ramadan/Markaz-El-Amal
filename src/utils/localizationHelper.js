@@ -117,6 +117,8 @@ export const allMessages = {
     SUCCESS_EDIT_CATEGORY: "Category updated successfully",
     FAIL_CREATE_CATEGORY: "Category creation failed",
     FAIL_EDIT_CATEGORY: "Category update failed",
+    REFUND_SUCCESS: "The refund request accepted successfuly,Check your email",
+    REFUND_FAILED: "The refund request has been denied",
   },
   ar: {
     LOGOUT_SUCCESS: "تم تسجيل الخروج بنجاح",
@@ -236,5 +238,7 @@ export const allMessages = {
     SUCCESS_EDIT_CATEGORY: "تم تحديث الفئة بنجاح",
     FAIL_CREATE_CATEGORY: "فشل إنشاء الفئة",
     FAIL_EDIT_CATEGORY: "فشل تحديث الفئة ",
+    REFUND_SUCCESS: "تم قبول طلب استرداد الأموال بنجاح تفقد ايميلك",
+    REFUND_FAILED: "فشل طلب استرداد الأموال",
   },
 };
